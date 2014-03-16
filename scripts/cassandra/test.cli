@@ -1,0 +1,96 @@
+##############################
+## test ddl
+##############################
+consistencylevel as all;
+
+$CassandraScript.execute("drop column family zoran_test", true)
+
+create column family zoran_test with column_type=Standard
+and key_validation_class=AsciiType
+and comparator=AsciiType
+and column_metadata=[
+{column_name:id, validation_class:LongType},
+{column_name:first, validation_class:UTF8Type},
+{column_name:last, validation_class:UTF8Type},
+{column_name:email, validation_class:UTF8Type, index_type:KEYS},
+{column_name:age, validation_class:IntegerType},
+{column_name:tuuid, validation_class:TimeUUIDType},
+{column_name:luuid, validation_class:LexicalUUIDType}
+];
+
+$CassandraScript.execute("drop column family zoran_test_super", true)
+create column family zoran_test_super with column_type=Super
+and key_validation_class=AsciiType
+and comparator=AsciiType
+and subcomparator=AsciiType
+and column_metadata=[
+{column_name:id, validation_class:LongType},
+{column_name:first, validation_class:UTF8Type},
+{column_name:last, validation_class:UTF8Type},
+{column_name:email, validation_class:UTF8Type},
+{column_name:age, validation_class:IntegerType},
+{column_name:city, validation_class:UTF8Type},
+{column_name:state, validation_class:UTF8Type}
+];
+
+##############################
+## insert to zoran_test
+##############################
+## 1
+set zoran_test['1']['id'] = long(1);
+set zoran_test['1']['first'] = 'zoran';
+set zoran_test['1']['last'] = 'dukic';
+set zoran_test['1']['email'] = 'zoran@email.com';
+set zoran_test['1']['age'] = integer(42);
+set zoran_test['1']['tuuid'] = timeuuid();
+set zoran_test['1']['luuid'] = lexicaluuid();
+## 2
+set zoran_test['2']['id'] = long(2);
+set zoran_test['2']['first'] = 'aleksandar';
+set zoran_test['2']['last'] = 'dukic';
+set zoran_test['2']['email'] = 'aleksandar@email.com';
+set zoran_test['2']['age'] = integer(42);
+## 3
+set zoran_test['3']['id'] = long(3);
+set zoran_test['3']['first'] = 'zoran';
+set zoran_test['3']['last'] = 'dukic';
+set zoran_test['3']['email'] = 'zoran@email.com';
+set zoran_test['3']['age'] = integer(167772160);
+## 4
+set zoran_test['4']['id'] = long(4);
+set zoran_test['4']['first'] = 'zoran';
+set zoran_test['4']['last'] = 'dukic';
+set zoran_test['4']['email'] = 'zoran@email.com';
+set zoran_test['4']['age'] = integer(42);
+
+##############################
+## insert to zoran_test_super
+##############################
+## 1
+set zoran_test_super['1']['usr']['id'] = long(1);
+set zoran_test_super['1']['usr']['first'] = 'zoran';
+set zoran_test_super['1']['usr']['last'] = 'dukic';
+set zoran_test_super['1']['usr']['email'] = 'zoran@email.com';
+set zoran_test_super['1']['usr']['age'] = integer(42);
+set zoran_test_super['1']['usr']['tuuid'] = timeuuid();
+set zoran_test_super['1']['usr']['luuid'] = lexicaluuid();
+set zoran_test_super['1']['addr']['city'] = 'mountain view';
+set zoran_test_super['1']['addr']['state'] = 'ca';
+## 2
+set zoran_test_super['2']['usr']['id'] = long(2);
+set zoran_test_super['2']['usr']['first'] = 'aleksandar';
+set zoran_test_super['2']['usr']['last'] = 'dukic';
+set zoran_test_super['2']['usr']['email'] = 'aleksandar@email.com';
+set zoran_test_super['2']['usr']['age'] = integer(42);
+## 3
+set zoran_test_super['3']['usr']['id'] = long(3);
+set zoran_test_super['3']['usr']['first'] = 'zoran';
+set zoran_test_super['3']['usr']['last'] = 'dukic';
+set zoran_test_super['3']['usr']['email'] = 'zoran@email.com';
+set zoran_test_super['3']['usr']['age'] = integer(167772160);
+## 4
+set zoran_test_super['4']['usr']['id'] = long(4);
+set zoran_test_super['4']['usr']['first'] = 'zoran';
+set zoran_test_super['4']['usr']['last'] = 'dukic';
+set zoran_test_super['4']['usr']['email'] = 'zoran@email.com';
+set zoran_test_super['4']['usr']['age'] = integer(42);

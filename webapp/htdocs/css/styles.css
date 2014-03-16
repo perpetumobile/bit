@@ -1,0 +1,100 @@
+## Modified Date: 04/10/09 2 pm 
+
+body {
+	background-color: white;
+	font-family: Arial,Helvetica,sans-serif;
+	color: black;
+}
+
+a, p, td, th, div, span, li, input, textarea, select, option {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 10pt;
+}
+
+#set( $linkFontColor = $Config.getProperty("Link.Font.Color", "blue") )
+#set( $linkVisitedFontColor = $Config.getProperty("Link.Visited.Font.Color", "800080") )
+
+a, a:link, a:active {
+	text-decoration: none;
+	font-weight: normal;
+	color: $linkFontColor;
+}
+a:visited {
+	text-decoration: none;
+	font-weight: normal;
+	color: $linkVisitedFontColor;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+.tf_info_messages {
+	margin: 0;
+	padding: 0;
+}
+
+.tf_info_welcometo {
+	background: #3E7688 none repeat scroll 0 0;
+	color: white;
+	margin: 0;
+	padding: 0.5em;
+}
+
+#tf_header_input {
+	margin: 2em;
+}
+
+.tf_nav_div {
+	float: left;
+	width: 220px;
+}
+
+.tf_top_div {
+	## float: left;
+	width: 100%;
+}
+
+.tf_main_div {
+	float: left;
+	width: 800px;
+}
+
+.tf_filter_label, .tf_filter_label_second {
+	float: left;
+	margin-right: 0.5em;
+	margin-left: 1em;
+	font-weight: bold;
+}
+
+.tf_filter_label {
+	width: 15em;
+	text-align: right;
+}
+
+.tf_input, .tf_input_middle {
+	margin-left: 1em;
+}
+
+.tf_input_middle {
+	float: left;
+}
+
+.tf_message, .tf_error_message {
+	font-weight: bold;
+	color: red;
+}
+
+#set( $bottomTableBackgroundColor = $Config.getProperty("Bottom.Table.Background.Color", $bannerTableBackgroundColor) )
+#set( $bottomTableBorderColor = $Config.getProperty("Bottom.Table.Border.Color", $bannerTableBorderColor) )
+#set( $bottomTableFontColor = $Config.getProperty("Bottom.Table.Font.Color", $bannerFontColor) )
+
+.BottomTable {
+	border: 1px none $bottomTableBorderColor;
+	border-top: 1px solid $bottomTableBorderColor;
+	background-color: $bottomTableBackgroundColor;
+	color: $bottomTableFontColor;
+	text-align: center;
+	width: 860px;
+	padding:20px;
+	clear: left;
+}

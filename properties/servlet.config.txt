@@ -1,0 +1,15 @@
+ServletEngine.Character.Encoding: UTF-8
+ServletEngine.Debug.Enabled: false
+
+HttpResource.Cashing.Disable: true
+
+PageServlet.Error.404.Template: error404.htm
+PageServlet.Error.Msg.Template: include/errorMsg.htm
+PageServlet.Error.Enabled: true
+
+Log.Statement.Enabled: true
+LogTool.Log.Statement.Enabled: true
+
+DB.Scripts.Path: /bit/scripts/db/
+Cassandra.Scripts.Path: /bit/scripts/cassandra/
+Data.Path: /data/

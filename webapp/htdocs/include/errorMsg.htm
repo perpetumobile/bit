@@ -1,0 +1,9 @@
+#if( $Config.getBooleanProperty("PageServlet.Error.Enabled", false) || $Params.getInt("PageServlet.Error.Enabled", 0) > 0 )
+	<br><br>
+	$PageServlet-ErrorMsg
+	<br><br>
+	$PageServlet-ErrorStackTrace
+#else
+	<br><br>
+	An error has occurred while processing your request.
+#end

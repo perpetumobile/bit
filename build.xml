@@ -1,0 +1,57 @@
+<project name="bit" basedir="." default="build">
+	
+	<path id="project.classpath">
+		<pathelement location="build"/>
+		<pathelement location="properties"/>
+		<fileset dir="lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="build"/>
+	</target>
+		
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+		
+	<target depends="init" name="build">
+		<javac destdir="build" debug="on">
+			<src path="src"/>
+			<classpath refid="project.classpath"/>
+		</javac>
+	</target>
+	
+	<target depends="init,build" name="deploy">
+		<delete dir="webapp/htdocs/WEB-INF/lib"/>		
+		<delete dir="webapp/htdocs/WEB-INF/classes"/>
+		<mkdir dir="webapp/htdocs/WEB-INF/lib"/>
+		<mkdir dir="webapp/htdocs/WEB-INF/classes"/>
+		<copy todir="webapp/htdocs/WEB-INF/lib">
+		    <fileset dir="lib"/>
+		</copy>
+		<delete file="webapp/htdocs/WEB-INF/lib/servlet-api.jar"/>
+		<copy todir="webapp/htdocs/WEB-INF/classes">
+		    <fileset dir="build"/>
+		</copy>
+		<copy file="properties/PROD_log4j.properties" tofile="properties/log4j.properties" overwrite="true"/>
+		<copy file="webapp/htdocs/WEB-INF/PROD_velocity.properties" tofile="webapp/htdocs/WEB-INF/velocity.properties" overwrite="true"/>
+		<copy file="properties/PROD_servlet.config.txt" tofile="properties/servlet.config.txt" overwrite="true"/>
+		<copy file="webapp/conf/PROD_ROOT.xml" tofile="webapp/conf/Catalina/localhost/ROOT.xml" overwrite="true"/>				
+		<copy file="../local.config.txt" tofile="properties/local.config.txt" overwrite="true" failonerror="false"/>
+		<copy file="../env.sh" tofile="bin/env.sh" overwrite="true" failonerror="false"/>
+	</target>
+	
+	<target name="jar">
+		<delete file="dist/bit-0.9.jar"/>
+		<jar destfile="dist/bit-0.9.jar">
+    		<fileset dir="build" includes="com/"/>
+    	</jar>
+	</target>
+	
+	<target depends="clean,init,build,jar" name="dist">
+	</target>
+	
+</project>

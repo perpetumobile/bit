@@ -1,0 +1,11 @@
+# This is db configuration file
+
+## Common to all db pools, each pool can overwrite the common properties
+Database.Driver: com.mysql.jdbc.Driver
+Database.Active.Max: 50
+Database.Retries: 3
+Database.LoginTimeout: 30
+Database.QueryTimeout: 30
+Database.User: 	
+Database.Password:
+Database.Url: jdbc:mysql://127.0.0.1:3306/

@@ -1,0 +1,52 @@
+#parse( "fb/include/top.htm" )
+
+<div>
+#if( $fbConnected )
+	#set( $friendList  = $FB.getFQL("friend_info", "SELECT uid1, uid2 from friend where uid1 = me()") )
+	#set( $friendListStr = "" )
+	#foreach ( $friend in $friendList )
+		#if( !$Util.nullOrEmptyString($friendListStr) )
+			#set( $friendListStr = "$friendListStr," )
+		#end
+		#set( $friendListStr = "$friendListStr $friend.getFieldValue('uid2')" )
+		#if( $foreach.count > 10 )
+			#break
+		#end
+	#end
+
+	<div>Likes:
+		$Util.replaceAll($FB.getGraphAPI("likes"), "{", "<br />{")
+		<p />
+	</div>
+	<div>Pages: 
+	#set ( $list = $FB.getFQL("page_fan", "SELECT page_id, type FROM page_fan WHERE uid=me()"))
+	#foreach ( $item in $list )
+		<br />page_id:$item.getFieldValue("page_id"), type: $item.getFieldValue("type")
+	#end 
+	<p />
+	</div>
+	<div>URL Likes:
+	## #set ( $list = $FB.getFQL("url_like", "SELECT user_id, url FROM url_like WHERE user_id in ( $friendListStr )") )
+	#set ( $list = $FB.getFQL("url_like", "SELECT user_id, url FROM url_like WHERE user_id = me()") )
+	#foreach ( $item in $list )
+		<br />user_id: $item.getFieldValue("user_id"), url: $item.getFieldValue("url")
+	#end
+	<p />
+	</div>
+	#*
+	<div>URL Like Objects:
+	#set ( $list = $FB.getFQL("object_url", "SELECT url, id, type, site FROM object_url WHERE url in (SELECT url FROM url_like WHERE user_id = me())") )
+	#foreach ( $item in $list )
+		<br />url: $item.getFieldValue("url"), id: $item.getFieldValue("id"), type: $item.getFieldValue("type"), site: $item.getFieldValue("site")
+		<div>Object:
+			$Util.replaceAll($FB.getGraphAPIObject($item.getFieldValue("id")), "{", "<br />{")
+			<p />
+		</div> 
+	#end
+	<p />
+	</div>
+	*#
+#end
+</div> 
+ 
+#parse( "include/bottom.htm" )

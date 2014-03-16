@@ -1,0 +1,26 @@
+#set( $photoDescription = $Params.getString("photo_description", "") )
+#set( $photoURL = $Params.getString("photo_url", "") )
+#if( ! $Util.nullOrEmptyString($photoURL) )
+	#set( $response = $FB.postGraphAPI("photos?message=$URL.encode($photoDescription)&url=$URL.encode($photoURL)") )
+#else
+	#set( $fileItem = $Params.getFileItem("photo_file") )
+	#if( $fileItem )
+		#set( $response = $FB.postGraphAPI("photos?message=$URL.encode($photoDescription)", "source", $fileItem) )
+	#end
+#end
+
+#if( $response )
+	#set( $photoId = $Util.getParamFromJSON($response, "id") )
+	## #set( $response = $FB.postGraphObject("$photoId?name=$URL.encode('This is an updated desc')") )
+	#set( $response = $FB.getGraphObject($photoId) )
+	#set( $photoDescription = $Util.getParamFromJSON($response, "name") )
+	#set( $photoUrl = $Util.getParamFromJSON($response, "source") )
+	
+	<script type="text/javascript">
+		var photoId = '$photoId';
+		var photoDescription = '$photoDescription';
+		var photoUrl = '$photoUrl';
+   		window.top.window.stopUpload(photoId, photoDescription, photoUrl);
+	</script>
+#end
+

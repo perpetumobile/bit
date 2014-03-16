@@ -1,0 +1,64 @@
+#set( $pageTitle = "FBConnect Test" )
+#parse( "include/top.htm" )
+
+#set( $fbAppID = $FB.FBAppID )
+#set( $fbConnected = $FB.isConnected() )
+
+<div id="fb-root"></div>
+<script type="text/javascript" src="//connect.facebook.net/en_US/all.js"></script>
+<script type="text/javascript">
+	FB.init({
+		appId: '$fbAppID', 
+		status: true, 
+		cookie: true, 
+		xfbml: true,
+		## frictionlessRequests : true
+	});
+	// FB.Canvas.setAutoGrow();	
+
+	FB.getLoginStatus(function(response) {
+		if (response.status === 'connected') {
+			// the user is logged in and connected to your
+			// app, and response.authResponse supplies
+			// the user’s ID, a valid access token, a signed
+			// request, and the time the access token 
+			// and signed request each expire
+			var uid = response.authResponse.userID;
+			var accessToken = response.authResponse.accessToken;
+			document.cookie = "fbs_" + "$fbAppID" + "=" + "\"uid=" + uid + "&access_token=" + accessToken + "\"";
+			#if( ! $fbConnected )
+				location.reload(true);
+			#end	
+		} else if (response.status === 'not_authorized') {
+   			// the user is logged in to Facebook, 
+   			// but not connected to the app
+		} else {
+			// the user isn't even logged in to Facebook.
+		}
+	});
+	
+	function logout() {
+		FB.logout();
+		location.reload(true);
+	}
+</script>
+
+<div>
+
+#if( ! $fbConnected ) 
+	#set( $fbPerms = "publish_stream,create_event,rsvp_event,sms,offline_access,email,read_stream,user_birthday,friends_birthday,user_likes,friends_likes,user_location,friends_location,user_notes,friends_notes,user_online_presence,friends_online_presence,user_photos,friends_photos,user_relationships,friends_relationships,user_status,friends_status,read_friendlists,read_requests" )
+	#set( $fbPerms = "email,user_birthday,user_likes,user_activities,user_status,user_photos,friends_birthday,friends_likes,friends_activities,friends_status,publish_actions" )
+	<fb:login-button show-faces="true" perms="$fbPerms" width="400" max-rows="1" v="2" onlogin="alert(FB._session.uid)"></fb:login-button>
+#else
+	<img src="$FB.getGraphAPIUrl('picture')" />
+	<a href="#" onclick="logout()">logout</a>
+	
+	<div>
+		<p />
+		FBSR Cookie: $FB.parseFBSRCookie()
+		<p />
+		Access Token: $FB.AccessToken
+		<p />
+	</div>
+#end	
+</div>

@@ -1,0 +1,8 @@
+#set( $action = $Params.getString("action") )
+#if( ! $Util.nullOrEmptyString($action) )
+	#set( $actionControler = $Action.getControler($action) )
+	#if( !$actionControler.run() )
+		#set( $actionFailed = true )
+		#parse( $actionControler.SourceTemplate )
+	#end
+#end

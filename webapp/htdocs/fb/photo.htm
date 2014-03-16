@@ -1,0 +1,55 @@
+#parse( "fb/include/top.htm" )
+
+<style>
+#upload_process {
+   /* z-index:100;
+   position:absolute;  */
+   visibility:hidden;
+   text-align:center;
+   width:400px;
+   margin:0px;
+   padding:0px;
+   background-color:#fff;
+   border:1px solid #ccc;
+}
+</style>
+
+<script type="text/javascript">
+	function startUpload() {
+		document.getElementById('upload_process').style.visibility = 'visible';
+    	return true;
+	}
+	
+	function stopUpload(photoId, photoDescription, photoUrl) {
+		document.getElementById('upload_process').style.visibility = 'hidden';
+		document.getElementById('result').innerHTML = 'ID: ' + photoId + '<br />Description: ' + photoDescription + '<br /><img src="' + photoUrl + '" /><br /><br />';
+		return true;   
+	}	
+</script>
+
+
+<div>
+#if( $fbConnected )		
+	
+	<div>
+		<form target="upload_target" name="f2" action="/fb/include/photoupload.htm" method="post" enctype="multipart/form-data" onSubmit="startUpload();">
+			<b>Upload Photo to FB Photo Album:</b>
+			<br /><b>URL:</b> <input name="photo_url" value="" size="50" />			
+			<b>Or File:</b> <input name="photo_file" type="file" />
+			<br /><b>Description:</b> <input name="photo_description" value="" size="50" />
+			<br /><b>App Name:</b> <input name="fb_app" value="$Params.getString('fb_app', '')" size="50" />
+			<br /><input type="submit" value="Upload" name="btn" />			
+		</form>
+	</div>
+	
+	<div>
+		<div id="result"></div>
+		<div id="upload_process">Loading...<br/><img src="/img/loader.gif" /></div>
+	</div>
+	
+	<iframe id="upload_target" name="upload_target" src="#" style="width:0;height:0;border:0px solid #fff;"></iframe>
+	
+#end
+</div> 
+ 
+#parse( "include/bottom.htm" )

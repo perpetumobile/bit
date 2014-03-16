@@ -1,0 +1,125 @@
+#macro( setOption $option )
+	#if( !$Util.nullOrEmptyString($option.OptionValue) )
+		#set( $optionValue = $option.OptionValue )
+	#else
+		#set( $optionValue = $option )
+	#end
+	#if( !$Util.nullOrEmptyString($option.OptionText) )
+		#set( $optionText = $option.OptionText )
+	#else
+		#set( $optionText = $option )
+	#end
+#end
+
+#macro( selectWithId $id $name $optionList $value $action )
+	<select name='$name' id='$id' $action>
+	#foreach( $option in $optionList )
+		#setOption ( $option )
+		#set( $isSelected = false )
+		#if( $optionValue.equalsIgnoreCase("$value") )
+			#set( $isSelected = true )
+		#end
+		#if( $isSelected )
+			<option value='$Util.encodeHtml($optionValue)' selected>$optionText
+		#else 
+			<option value='$Util.encodeHtml($optionValue)'>$optionText
+		#end
+	#end
+	</select>
+#end
+
+#macro( select $name $optionList $value $action )
+	#selectWithId( $name $name $optionList $value $action )
+#end
+
+#macro( selectMulti $name $optionList $valueList $size)
+	<select multiple size=$size name='$name' id='$name'>
+	#foreach( $option in $optionList)
+		#setOption ( $option )
+		#set( $isSelected = false )
+		#foreach( $value in $valueList )
+			#if( $optionValue.equalsIgnoreCase("$value") )
+				#set( $isSelected = true )
+			#end
+		#end
+		#if( $isSelected )
+			<option value='$Util.encodeHtml($optionValue)' selected>$optionText
+		#else
+			<option value='$Util.encodeHtml($optionValue)'>$optionText
+		#end
+	#end
+	</select>
+#end
+
+#macro( boxList $boxType $name $optionList $valueList $colNum)
+	#set( $colCounter = 1 )
+	#set( $colWidth = 100/$colNum )
+	<table>
+	#foreach( $option in $optionList )
+		#setOption ( $option )
+		#if( $colCounter == 1 )
+			<tr>
+		#end
+		#set( $isChecked = false )
+		#if( $boxType.equals("radio") )
+			#if( $optionValue.equalsIgnoreCase("$value") )
+				#set( $isChecked = true )
+			#end
+		#else
+			#foreach( $value in $valueList )
+				#if( $optionValue.equalsIgnoreCase("$value") )
+					#set( $isChecked = true )
+				#end
+			#end
+		#end
+		<td valign=top>
+		#if( $isChecked )
+			<input type=$boxType name='$name' value='$Util.encodeHtml($optionValue)' checked>$optionText
+		#else
+			<input type=$boxType name='$name' value='$Util.encodeHtml($optionValue)'>$optionText
+		#end
+		</td>
+		#set( $colCounter = $colCounter + 1 )
+		#if( $colCounter > $colNum )
+			</tr>
+			#set( $colCounter = 1 )
+		#end
+	#end
+	</table>
+#end
+
+#macro( checkboxList $name $optionList $valueList $colNum )
+	#boxList( "checkbox" $name $optionList $valueList $colNum )
+#end
+
+#macro( radioList $name $optionList $value $colNum )
+	#boxList( "radio" $name $optionList $value $colNum )
+#end
+
+#macro( statementLog )
+	#foreach( $item in $Log.StatementLog )
+		<hr />
+		<span>
+			<font size=-1>
+				#if( !$Util.nullOrEmptyString($item.Stmt) )
+					$item.Stmt
+				#end
+				#if( !$Util.nullOrEmptyString($item.Msg) )
+					#if( !$Util.nullOrEmptyString($item.Stmt) )
+						<br />
+					#end
+					$item.Msg
+				#end	
+				<font color=red>
+					#if( $item.ElapsedTime > 0 )
+						(Elapsed&nbsp;Time:&nbsp;$item.ElapsedTime&nbsp;msec)
+					#end
+					#if( !$Util.nullOrEmptyString($item.ErrorMsg) )
+						<br />Error: $item.ErrorMsg
+					#end
+				</font>
+			</font>
+		</span>
+	#end
+	$Log.clearStatementLog()
+#end

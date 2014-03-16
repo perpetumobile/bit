@@ -1,0 +1,31 @@
+########################################
+## Cassandra Connection
+########################################
+Test.Cassandra.Database.Host: 127.0.0.1
+Test.Cassandra.Database.Port: 9160
+Test.Cassandra.Database.Keyspace: zoran_test
+
+########################################
+## Cassandra OR Mapping
+########################################
+CassandraRecord.ReadAll.Enable: true
+
+# TestStandard.Cassandra.Record.Class: com.perpetumobile.bit.cassandra.CassandraRecord
+TestStandard.Cassandra.CassandraRecord.ColumnFamily: zoran_test
+# TestStandard.Cassandra.CassandraRecord.SuperColumn: facebook
+TestStandard.Cassandra.Record.Fields: id long, first varchar, last varchar, email varchar, age int, tuuid bytebuffer, luuid bytebuffer
+
+# TestSuper1.Cassandra.Record.Class: com.perpetumobile.bit.cassandra.CassandraRecord
+TestSuper1.Cassandra.CassandraRecord.ColumnFamily: zoran_test_super
+TestSuper1.Cassandra.CassandraRecord.SuperColumn: usr
+TestSuper1.Cassandra.Record.Fields: id long, first varchar, last varchar, email varchar, age int, tuuid bytebuffer, luuid bytebuffer
+
+# TestSuper2.Cassandra.Record.Class: com.perpetumobile.bit.cassandra.CassandraRecord
+TestSuper2.Cassandra.CassandraRecord.ColumnFamily: zoran_test_super
+TestSuper2.Cassandra.CassandraRecord.SuperColumn: addr
+TestSuper2.Cassandra.Record.Fields: city varchar, state varchar
+
+# TestSuper3.Cassandra.Record.Class: com.perpetumobile.bit.cassandra.CassandraRecord
+TestSuper3.Cassandra.CassandraRecord.ColumnFamily: zoran_test_super
+TestSuper3.Cassandra.CassandraRecord.IsSuperColumn: true
+#TestSuper3.Cassandra.Record.Fields: id long, first varchar, last varchar, email varchar, age int, tuuid bytebuffer, luuid bytebuffer

@@ -1,0 +1,47 @@
+#set( $pageTitle = "FB Link Stat" )
+#parse( "include/top.htm" )
+
+#set( $url = $Params.getString("url", "") )
+
+#set( $debug = $Params.getInt("debug", 0) )
+#if( $debug > 0 )
+	#set( $urlParams = "$urlParams&debug=1" )
+#end
+
+<div class="tf_top_div">
+<form name="f" action="/fb/linkStats.htm">
+	<div class="tf_filter_label">url:</div>
+	<div>
+		<input name="url" value="$Util.encodeHtml($url)" maxlength="4096" size="100" />
+	</div>
+	#if( $debug > 0 )
+		<br />
+		<div class="tf_filter_label">&nbsp;</div>
+		<div>
+			<input type="checkbox" id="debug" name="debug" value="1" checked>debug	
+		</div>
+	#end
+	<div class="tf_filter_label">&nbsp;</div>
+	<div><input type="submit" value="Browse" name="btn"/></div>
+	<p>&nbsp;</p>
+</form>	
+</div>
+
+#if( ! $Util.nullOrEmptyString($url) )
+<div>
+	#set( $quot = '"' )
+	#set( $query = "select click_count, comment_count, comments_fbid, commentsbox_count, like_count, normalized_url, share_count, total_count, url from link_stat where url=$quot$url$quot" ) 
+	#set( $list = $FB.getFQL("link_stat", $query) )
+	#foreach( $r in $list )
+		<table cellpadding="10" cellspacing="0" width="$tableWidth" bgcolor="#FFFFFF" border="1">
+		<tbody>
+		#foreach( $f in $r.Fields )
+			<tr><td align="right"><b>$f.FieldName</b></td><td>$f.FieldValue</td></tr> 
+		#end
+		</tbody>
+		</table>
+	#end
+</div>
+#end		
+
+#parse( "include/bottom.htm" )

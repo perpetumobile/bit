@@ -1,0 +1,17 @@
+<config>
+	<context-values>
+		<resource path="">
+			<value key="Config" object-class="com.perpetumobile.bit.servlet.tools.ConfigTool"/>	
+			<value key="Params" object-class="com.perpetumobile.bit.servlet.tools.ParamTool"/>
+			<value key="Cookies" object-class="com.perpetumobile.bit.servlet.tools.CookieTool"/>
+			<value key="URL" object-class="com.perpetumobile.bit.servlet.tools.URLTool"/>
+			<value key="Log" object-class="com.perpetumobile.bit.servlet.tools.LogTool"/>
+			<value key="Util" object-class="com.perpetumobile.bit.util.Util"/>
+			<value key="DBUtil" object-class="com.perpetumobile.bit.orm.db.DBUtil"/>
+			<value key="DBScript" object-class="com.perpetumobile.bit.orm.db.DBScript"/>
+			<value key="Action" object-class="com.perpetumobile.bit.servlet.tools.ActionTool"/>
+			<value key="Errors" object-class="com.perpetumobile.bit.servlet.tools.ErrorTool"/>
+			<value key="FB" object-class="com.perpetumobile.bit.servlet.tools.FBTool"/>
+		</resource>
+	</context-values>
+</config>
