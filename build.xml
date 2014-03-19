@@ -20,6 +20,7 @@
 	<target depends="init" name="build">
 		<javac destdir="build" debug="on">
 			<src path="src"/>
+			<src path="test"/>
 			<classpath refid="project.classpath"/>
 		</javac>
 	</target>
@@ -45,9 +46,9 @@
 	</target>
 	
 	<target name="jar">
-		<delete file="dist/bit-0.9.jar"/>
-		<jar destfile="dist/bit-0.9.jar">
-    		<fileset dir="build" includes="com/"/>
+		<delete file="dist/perpetumobile-bit.jar"/>
+		<jar destfile="dist/perpetumobile-bit.jar">
+    		<fileset dir="build"/>
     	</jar>
 	</target>
 	
