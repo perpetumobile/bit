@@ -1,4 +1,5 @@
 /build
+/dist
 /webapp/logs/**
 /webapp/temp/**
 /webapp/work/**
