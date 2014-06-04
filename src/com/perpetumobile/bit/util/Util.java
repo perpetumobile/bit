@@ -515,8 +515,9 @@ final public class Util {
 		StringBuffer result = new StringBuffer();
 		BufferedReader in = new BufferedReader(new FileReader(fileName));
 		char[] buf = new char[1024];
-		while (in.read(buf) != -1) {
-			result.append(buf);
+		int len = 0;
+		while ((len = in.read(buf)) != -1) {
+			result.append(buf, 0, len);
 		}
 		in.close();
 		return result;
