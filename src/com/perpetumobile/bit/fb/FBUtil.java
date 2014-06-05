@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.FileItem;
 
 import com.perpetumobile.bit.config.Config;
 import com.perpetumobile.bit.http.HttpManager;
+import com.perpetumobile.bit.http.HttpRequest;
 import com.perpetumobile.bit.orm.xml.SAXParserManager;
 import com.perpetumobile.bit.orm.xml.XMLRecord;
 import com.perpetumobile.bit.servlet.tools.URLTool;
@@ -216,9 +217,9 @@ public class FBUtil {
 		String url = getFQLUrl(query, accessToken);
 		if(!Util.nullOrEmptyString(url)) {
 			try {
-				XMLRecord root = SAXParserManager.getInstance().parse(url, "FQL", "fql_query_response");
+				XMLRecord root = SAXParserManager.getInstance().parseImpl(new HttpRequest(url), "FQL", "fql_query_response", null);
 				if(root != null) {
-					root.getXMLRecords("FQL", "fql_query_response."+tableName, result);
+					result = root.getXMLRecords("FQL", "fql_query_response", tableName);
 				}
 			} catch (Exception e) {
 				logger.error("FBUtil.getFQL exception", e);

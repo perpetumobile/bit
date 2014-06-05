@@ -1,5 +1,8 @@
 package com.perpetumobile.bit.orm.xml;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.StringReader;
 
 import javax.xml.parsers.SAXParser;
@@ -8,9 +11,13 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.xml.sax.InputSource;
 
 import com.perpetumobile.bit.http.HttpManager;
+import com.perpetumobile.bit.http.HttpRequest;
 import com.perpetumobile.bit.orm.record.StatementLog;
 import com.perpetumobile.bit.orm.record.StatementLogger;
 import com.perpetumobile.bit.util.Logger;
+import com.perpetumobile.bit.util.Task;
+import com.perpetumobile.bit.util.TaskCallback;
+import com.perpetumobile.bit.util.ThreadPoolManager;
 import com.perpetumobile.bit.util.Util;
 
 
@@ -61,36 +68,56 @@ public class SAXParserManager {
 		}
 	}
 	
-	public XMLRecord parse(String uri, String configNamePrefix, String rootElementName) throws Exception {
-		return parse(uri, configNamePrefix, rootElementName, null);
-	}
-	
-	public XMLRecord parse(String uri, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) throws Exception {
+	public XMLRecord parseImpl(InputSource in, String configNamePrefix, String rootElementName) 
+	throws Exception { 
 		SAXParser parser = null;
 		XMLRecordHandler handler = null;
 		XMLRecord result = null;  
-		
-		int stmtLogIndex = start(stmtLogger, uri);	
 		try {
 			parser = getSAXParser();
 			handler = new XMLRecordHandler(configNamePrefix, rootElementName, parser);
-			String response = HttpManager.getInstance().get(uri).getPageSource();
-			// TODO: There must be a faster way to fix & :-) 
-			response = Util.replaceAll(response, "&amp;", "&");
-			response = Util.replaceAll(response, "&", "&amp;");
-			parser.parse(new InputSource(new StringReader(response)), handler);
-			// parser.parse(uri, handler);
+			parser.parse(in, handler);
 			result = handler.getXMLRecord();
-			end(stmtLogger, stmtLogIndex);
 		} catch (Exception e) {
-			logErrorMsg(stmtLogger, stmtLogIndex, e.getMessage());
 			invalidateSAXParser(parser);
 			parser = null;
 			throw e;
 		} finally {
 			returnSAXParser(parser);
 		}
-		
+		return result;
+	}
+	
+	public XMLRecord parseImpl(HttpRequest httpRequest, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
+		XMLRecord result = null;  
+		int stmtLogIndex = start(stmtLogger, httpRequest.getUrl());	
+		try {
+			String response = HttpManager.getInstance().executeImpl(httpRequest).getPageSource();
+			if(!Util.nullOrEmptyString(response)) {
+				// TODO: There must be a faster way to fix & :-) 
+				response = Util.replaceAll(response, "&amp;", "&");
+				response = Util.replaceAll(response, "&", "&amp;");
+				result = parseImpl(new InputSource(new StringReader(response)), configNamePrefix, rootElementName);
+			}
+			end(stmtLogger, stmtLogIndex);
+		} catch (Exception e) {
+			logErrorMsg(stmtLogger, stmtLogIndex, e.getMessage());
+			logger.error("SAXParserManager.parseImpl exception", e);
+		}
+		return result;
+	}
+	
+	public XMLRecord parseImpl(File file, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
+		XMLRecord result = null;
+		int stmtLogIndex = start(stmtLogger, file.getAbsolutePath());	
+		try {
+			InputSource in = new InputSource(new BufferedReader(new FileReader(file)));
+			result = parseImpl(in, configNamePrefix, rootElementName);
+			end(stmtLogger, stmtLogIndex);
+		} catch (Exception e) {
+			logErrorMsg(stmtLogger, stmtLogIndex, e.getMessage());
+			logger.error("JSONParserManager.parseImpl exception", e);
+		}
 		return result;
 	}
 	
@@ -112,5 +139,140 @@ public class SAXParserManager {
 		if (stmtLogger != null) {
 			stmtLogger.setErrorMsg(index, errorMsg);
 		}
+	}
+	
+	protected void runTask(Task task, String threadPoolManagerConfigName, boolean isSync) {
+		try {
+			if(Util.nullOrEmptyString(threadPoolManagerConfigName)) {
+				ThreadPoolManager.getInstance().run(ThreadPoolManager.BIT_SERVICE_THREAD_POOL_MANAGER_CONFIG_NAME, task);
+			} else {
+				ThreadPoolManager.getInstance().run(threadPoolManagerConfigName, task);
+			}
+			if(isSync) {
+				task.isDone();
+			}
+		} catch (Exception e) {
+			logger.error("SAXParserManager.runTask exception", e);
+		}
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
+		return parseSync(httpRequest, configNamePrefix, rootElementName, null, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		return parseSync(httpRequest, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+		SAXParserTask task = new SAXParserTask();
+		task.setHttpRequest(httpRequest);
+		task.setConfigNamePrefix(configNamePrefix);
+		task.setRootElementName(rootElementName);
+		task.setStmtLogger(stmtLogger);
+		runTask(task, threadPoolManagerConfigName, true);
+		return task.getResult();
+	}
+
+	/**
+	 * Parse is executed in a Bit Service Thread.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(File file, String configNamePrefix, String rootElementName) {
+		return parseSync(file, configNamePrefix, rootElementName, null, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(File file, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		return parseSync(file, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public XMLRecord parseSync(File file, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+		SAXParserTask task = new SAXParserTask();
+		task.setFile(file);
+		task.setConfigNamePrefix(configNamePrefix);
+		task.setRootElementName(rootElementName);
+		task.setStmtLogger(stmtLogger);
+		runTask(task, threadPoolManagerConfigName, true);
+		return task.getResult();
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
+		parse(callback, httpRequest, configNamePrefix, rootElementName, null, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		parse(callback, httpRequest, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+		SAXParserTask task = new SAXParserTask();
+		task.setHttpRequest(httpRequest);
+		task.setConfigNamePrefix(configNamePrefix);
+		task.setRootElementName(rootElementName);
+		task.setStmtLogger(stmtLogger);
+		task.setCallback(callback);
+		runTask(task, threadPoolManagerConfigName, false);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, File file, String configNamePrefix, String rootElementName) {
+		parse(callback, file, configNamePrefix, rootElementName, null, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, File file, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		parse(callback, file, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	}
+	
+	/**
+	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void parse(TaskCallback<SAXParserTask> callback, File file, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+		SAXParserTask task = new SAXParserTask();
+		task.setFile(file);
+		task.setConfigNamePrefix(configNamePrefix);
+		task.setRootElementName(rootElementName);
+		task.setStmtLogger(stmtLogger);
+		task.setCallback(callback);
+		runTask(task, threadPoolManagerConfigName, false);
 	}
 }

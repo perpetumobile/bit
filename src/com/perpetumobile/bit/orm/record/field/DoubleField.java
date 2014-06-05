@@ -45,6 +45,10 @@ public class DoubleField extends Field {
 		return Double.toString(value);
 	}
 	
+	public String getJSONFieldValue() {
+		return getFieldValue();
+	}
+	
 	public double getDoubleFieldValue() {
 		return value;
 	}

@@ -77,7 +77,7 @@ public class RelationshipConfig {
 		}
 
 		static public RelationshipType get(String type) { 
-			return map.get(type); 
+			return map.get(type.toLowerCase()); 
 		}
 	}
 }

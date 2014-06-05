@@ -44,6 +44,10 @@ public class FloatField extends Field {
 	public String getFieldValue() {
 		return Float.toString(value);
 	}
+	
+	public String getJSONFieldValue() {
+		return getFieldValue();
+	}
 			
 	public float getFloatFieldValue() {
 		return value;

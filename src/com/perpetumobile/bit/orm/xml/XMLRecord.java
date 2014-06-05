@@ -1,9 +1,6 @@
 package com.perpetumobile.bit.orm.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.xml.sax.Attributes;
 
@@ -22,8 +19,6 @@ import com.perpetumobile.bit.util.Util;
  */
 public class XMLRecord extends Record {
 	
-	HashMap<String, ArrayList<XMLRecord>> map = new HashMap<String, ArrayList<XMLRecord>>();
-
 	public XMLRecord() {
 	}
 	
@@ -73,41 +68,57 @@ public class XMLRecord extends Record {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void aggregate(XMLRecord rec) {
 		Field f = getField(rec.getLocalName());
 		if(f != null && !f.isSet()) {
 			f.setFieldValue(rec.getFieldValue(rec.getLocalName()));
 		} else {
 			String key = rec.getConfigName();
-			ArrayList<XMLRecord> list = map.get(key);
+			ArrayList<XMLRecord> list = (ArrayList<XMLRecord>)listRelationshipMap.get(key);
 			if(list == null) {
 				list = new ArrayList<XMLRecord>();
-				map.put(key, list);
+				listRelationshipMap.put(key, list);
 			}
 			list.add(rec);
 		}
 	}
 	
-	public void getXMLRecords(String configNamePrefix, String elementName, ArrayList<XMLRecord> result) {
-		StringBuffer buf = new StringBuffer(configNamePrefix);
-		buf.append(XMLRecordConfig.CONFIG_NAME_DELIMITER);
-		buf.append(elementName);
-		getXMLRecords(buf.toString(), result);
+	public ArrayList<XMLRecord> getXMLRecords(String... configNameArray) {
+		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>(); 
+		
+		StringBuilder buf = new StringBuilder();
+		boolean isFirst = true;
+		for(String s : configNameArray) {
+			if(!isFirst) {
+				buf.append(getConfigNameDelimiter());
+			}
+			buf.append(s);
+			isFirst = false;
+		}
+		getXMLRecords(result, buf.toString());
+		
+		return result;
 	}
 	
-	public void getXMLRecords(String configName, ArrayList<XMLRecord> result) {
+	@SuppressWarnings("unchecked")
+	protected void getXMLRecords(ArrayList<XMLRecord> result, String configName) {
 		if(configName.startsWith(getConfigName())) {
-			int index = configName.indexOf(XMLRecordConfig.CONFIG_NAME_DELIMITER, getConfigName().length()+1);
+			int index = configName.indexOf(getConfigNameDelimiter(), getConfigName().length()+1);
 			if(index != -1) {
+				// need to walk down relationship maps
 				String key = configName.substring(0, index);
-				ArrayList<XMLRecord> list = map.get(key);
+				
+				// add records from listRelationshipMap
+				ArrayList<XMLRecord> list = (ArrayList<XMLRecord>)listRelationshipMap.get(key);
 				if(list != null) {
 					for(XMLRecord rec : list) {
-						rec.getXMLRecords(configName, result);
+						rec.getXMLRecords(result, configName);
 					}
 				}
 			} else {
-				ArrayList<XMLRecord> list = map.get(configName);
+				// add records from listRelationshipMap
+				ArrayList<XMLRecord> list = (ArrayList<XMLRecord>)listRelationshipMap.get(configName);
 				if(list != null) {
 					result.addAll(list);
 				}
@@ -130,17 +141,5 @@ public class XMLRecord extends Record {
 	throws Exception {
 		// lazy relationship loading not supported for XMLRecord
 		return null;
-	}
-	
-	public void print(boolean printLabel) {
-		super.print(printLabel);
-				
-		Set<Entry<String, ArrayList<XMLRecord>>> set = map.entrySet();
-		for(Entry<String, ArrayList<XMLRecord>> e : set) {
-			ArrayList<XMLRecord> list = e.getValue();
-			for(XMLRecord rec : list) {
-				rec.print(printLabel);
-			}
-		}
 	}
 }

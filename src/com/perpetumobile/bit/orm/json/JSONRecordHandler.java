@@ -35,12 +35,12 @@ public class JSONRecordHandler implements ContentHandler {
 	
 	protected void init(String configName, String key, JSONParser parser, Reader in) {
 		this.key = key;
-		
 		this.configName = configName;
-		if(!Util.nullOrEmptyString(key)) {
+		
+		if(!Util.nullOrEmptyString(key)) { 
 			StringBuffer buf = new StringBuffer();
 			buf.append(configName);
-			buf.append(JSONRecordConfig.CONFIG_NAME_DELIMITER);
+			buf.append(JSONRecordConfigFactory.getInstance().getRecordConfig(configName).getConfigNameDelimiter());
 			buf.append(key);
 			this.configName = buf.toString();
 		}
@@ -55,8 +55,8 @@ public class JSONRecordHandler implements ContentHandler {
 	
 	protected void createJSONRecord() {
 		try {
-			JSONRecordConfig JSONRecordConfig = JSONRecordConfigFactory.getInstance().getRecordConfig(configName);
-			jsonRecord = (JSONRecord)JSONRecordConfig.createRecord();
+			JSONRecordConfig jsonRecordConfig = JSONRecordConfigFactory.getInstance().getRecordConfig(configName);
+			jsonRecord = (JSONRecord)jsonRecordConfig.createRecord();
 		} catch (Exception e) {
 			jsonRecord = null;
 		}
@@ -68,9 +68,9 @@ public class JSONRecordHandler implements ContentHandler {
 		parser.parse(in, this, true);
 	}
 	
-	public void aggregate(JSONRecord rec) {
+	public void aggregate(JSONRecord rec, boolean isList) {
 		if(jsonRecord != null) {
-			jsonRecord.aggregate(rec);
+			jsonRecord.aggregate(rec, isList);
 		}
 	}
 
@@ -91,9 +91,17 @@ public class JSONRecordHandler implements ContentHandler {
 	}
 
 	public boolean startObject() throws ParseException, IOException {
+		boolean isNewComplexObject = true;
 		if(isArray) {
-			createJSONRecord();
-		} else if(!Util.nullOrEmptyString(nextKey)) {
+			if(jsonRecord == null) {
+				// need to start jsonRecord for this array
+				createJSONRecord();
+				// this is not new complex object but an object that belongs to this array
+				isNewComplexObject = false;
+			}
+		} 
+		
+		if(isNewComplexObject && !Util.nullOrEmptyString(nextKey)) {
 			JSONRecordHandler handler = new JSONRecordHandler(nextKey, this);
 			handler.createJSONRecord();
 			handler.handle(nextKey);
@@ -106,7 +114,9 @@ public class JSONRecordHandler implements ContentHandler {
 			// no need to swap content handler back to parent
 			// parent parse is already waiting
 			// parser.parse(in, parent, true);
-			parent.aggregate(jsonRecord);
+			parent.aggregate(jsonRecord, isArray);
+			// clear jsonRecord in case we are processing an array and this handler will be used
+			jsonRecord = null;
 			if(!isArray) {
 				return false;
 			}
@@ -156,8 +166,9 @@ public class JSONRecordHandler implements ContentHandler {
 			}
 		}
 		if(isPrimitiveArray) {
-			if(parent != null) {
-				parent.aggregate(jsonRecord);
+			if(parent != null && jsonRecord != null) {
+				jsonRecord.setPrimitive(true);
+				parent.aggregate(jsonRecord, true);
 			}
 			jsonRecord = null;
 		}

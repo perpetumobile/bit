@@ -15,6 +15,8 @@ public class ThreadPoolManager {
 	static public ThreadPoolManager instance = new ThreadPoolManager();
 	static public ThreadPoolManager getInstance() { return instance; }
 	
+	static final public String BIT_SERVICE_THREAD_POOL_MANAGER_CONFIG_NAME = "BitService";
+	
 	public final static String THREAD_POOL_MANAGER_ACTIVE_MAX_KEY = "ThreadPoolManager.Active.Max";
 	public final static int THREAD_POOL_MANAGER_ACTIVE_MAX_DEFAULT = 20;
 	

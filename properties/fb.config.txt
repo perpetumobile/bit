@@ -5,21 +5,21 @@ ZorkZest.FB.AppID: 117361351621132
 ########################################
 ## OR Mapping for FQL
 ########################################
-FQL.fql_query_response.friend_info.Record.Fields: uid1 long,\
+FQL|fql_query_response|friend_info.Record.Fields: uid1 long,\
 uid2 long
 
-FQL.fql_query_response.object_url.Record.Fields: url varchar,\
+FQL|fql_query_response|object_url.Record.Fields: url varchar,\
 id long,\
 type varchar,\
 site varchar
 
-FQL.fql_query_response.url_like.Record.Fields: user_id varchar,\
+FQL|fql_query_response|url_like.Record.Fields: user_id varchar,\
 url varchar
 
-FQL.fql_query_response.page_fan.Record.Fields: page_id long,\
+FQL|fql_query_response|page_fan.Record.Fields: page_id long,\
 type varchar
 
-FQL.fql_query_response.link_stat.Record.Fields: click_count long,\
+FQL|fql_query_response|link_stat.Record.Fields: click_count long,\
 comment_count long,\
 comments_fbid long,\
 commentsbox_count long,\

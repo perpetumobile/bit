@@ -61,7 +61,7 @@ class RedirectLocationHttpResponseInterceptor implements HttpResponseInterceptor
 	}
 }
 
-public class HttpManager {
+public class HttpManager extends HttpManagerAdapter {
 	static private Logger logger = new Logger(HttpManager.class);
 	
 	private static HttpManager instance = new HttpManager();

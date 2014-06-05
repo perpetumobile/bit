@@ -14,7 +14,6 @@ import com.perpetumobile.bit.orm.record.field.FieldConfig;
 public class JSONRecordConfig extends RecordConfig {
 	
 	public static final String PARSE_ALL_ENABLE_CONFIG_KEY = "JSONRecord.ParseAll.Enable";
-	public static final String CONFIG_NAME_DELIMITER = ".";
 	
 	protected boolean parseAll = true;
 	

@@ -39,7 +39,7 @@ public class XMLRecordHandler extends DefaultHandler {
 		
 		StringBuffer buf = new StringBuffer();
 		buf.append(configNamePrefix);
-		buf.append(XMLRecordConfig.CONFIG_NAME_DELIMITER);
+		buf.append(XMLRecordConfigFactory.getInstance().getRecordConfig(configNamePrefix).getConfigNameDelimiter());
 		buf.append(localName);
 		this.configName = buf.toString();	
 		
@@ -55,7 +55,7 @@ public class XMLRecordHandler extends DefaultHandler {
 		
 		StringBuffer buf = new StringBuffer();
 		buf.append(parent.configName);
-		buf.append(XMLRecordConfig.CONFIG_NAME_DELIMITER);
+		buf.append(XMLRecordConfigFactory.getInstance().getRecordConfig(parent.configName).getConfigNameDelimiter());
 		buf.append(localName);
 		configName = buf.toString();
 		

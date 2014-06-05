@@ -45,6 +45,10 @@ public class LongField extends Field {
 		return Long.toString(value);
 	}
 	
+	public String getJSONFieldValue() {
+		return getFieldValue();
+	}
+	
 	public long getLongFieldValue() {
 		return value;
 	}

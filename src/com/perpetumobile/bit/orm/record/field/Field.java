@@ -109,6 +109,15 @@ abstract public class Field {
 		return getFieldValue();
 	}
 	
+	public String getJSONFieldValue() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("\"");
+		// TODO: perform json escaping		
+		buf.append(getFieldValue());
+		buf.append("\"");
+		return buf.toString();
+	}
+	
 	// ByteBufferField interface
 	abstract public ByteBuffer getByteBufferFieldValue(); 
 	abstract void setByteBufferFieldValueImpl(ByteBuffer fieldValue); 

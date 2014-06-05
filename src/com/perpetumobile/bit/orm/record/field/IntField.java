@@ -69,6 +69,10 @@ public class IntField extends Field {
 		return Integer.toString(value);
 	}
 	
+	public String getJSONFieldValue() {
+		return getFieldValue();
+	}
+	
 	public int getIntFieldValue() {
 		return value;
 	}

@@ -14,7 +14,6 @@ import com.perpetumobile.bit.orm.record.field.FieldConfig;
 public class XMLRecordConfig extends RecordConfig {
 	
 	public static final String PARSE_ALL_ENABLE_CONFIG_KEY = "XMLRecord.ParseAll.Enable";
-	public static final String CONFIG_NAME_DELIMITER = ".";
 	
 	protected String localName = null;
 	protected boolean parseAll = true;
@@ -32,7 +31,7 @@ public class XMLRecordConfig extends RecordConfig {
 	protected void init(String configName, VelocityContext vc)
 	throws ClassNotFoundException {
 		super.init(configName, XMLRecord.class, vc);
-		int index = configName.lastIndexOf(CONFIG_NAME_DELIMITER);
+		int index = configName.lastIndexOf(getConfigNameDelimiter());
 		if(index != -1) {
 			localName = configName.substring(index+1);
 		} else {

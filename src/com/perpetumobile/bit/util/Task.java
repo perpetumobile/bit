@@ -13,9 +13,18 @@ abstract public class Task implements Runnable {
 	private boolean done = false;
 	private Object doneLock = new Object();
 	
+	private boolean success = true;
+	
+	protected TaskCallback<Task> callback = null;
+	
 	public Task() { 
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	public void setCallback(TaskCallback<? extends Task> callback) {
+		this.callback = (TaskCallback<Task>)callback;
+	}
+
 	public void reset() {
 		started = false;
 		done = false;
@@ -64,9 +73,18 @@ abstract public class Task implements Runnable {
 	@Override
 	public void run() {
 		start();
-		runImpl();
+		try {
+			runImpl();
+		} catch (Exception e) {
+			success = false;
+		}
 		done();
+		if(callback != null) callback.onTaskDone(this);
 	}
 	
-	abstract public void runImpl();
+	public boolean isSuccess() {
+		return success;
+	}
+
+	abstract public void runImpl() throws Exception;
 }
