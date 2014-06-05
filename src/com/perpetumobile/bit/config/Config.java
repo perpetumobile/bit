@@ -20,6 +20,8 @@ final public class Config {
 	
 	private ConfigProperties properties = null;
 	
+	private ArrayList<ConfigSubscriber> subscriberList = new ArrayList<ConfigSubscriber>();
+	
 	private Config() {
 		reset();
 		
@@ -39,6 +41,18 @@ final public class Config {
 		
 		// is this thread safe?
 		properties = tmpProperties;
+		
+		publish();
+	}
+	
+	public void subscribe(ConfigSubscriber subscriber) {
+		subscriberList.add(subscriber);		
+	}
+	
+	protected void publish() {
+		for(ConfigSubscriber subscriber : subscriberList) {
+			subscriber.onConfigReset();
+		}
 	}
 	
 	final private String getPropertyImpl(String key) {

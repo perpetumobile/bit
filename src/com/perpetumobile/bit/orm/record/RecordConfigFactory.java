@@ -4,19 +4,22 @@ import java.util.HashMap;
 
 import org.apache.velocity.VelocityContext;
 
+import com.perpetumobile.bit.config.Config;
+import com.perpetumobile.bit.config.ConfigSubscriber;
 import com.perpetumobile.bit.util.Logger;
 
 /**
  * 
  * @author  Zoran Dukic
  */
-abstract public class RecordConfigFactory<T extends RecordConfig> {
+abstract public class RecordConfigFactory<T extends RecordConfig> implements ConfigSubscriber {
 	static private Logger logger = new Logger(RecordConfigFactory.class);
 	
 	protected HashMap<String, T> recordConfigs = new HashMap<String, T>(); 
 	private Object lock = new Object();
 	
 	public RecordConfigFactory() {
+		Config.getInstance().subscribe(this);
 	}
 	
 	abstract protected T createRecordConfig(String configName, VelocityContext vc) throws Exception;
@@ -42,6 +45,13 @@ abstract public class RecordConfigFactory<T extends RecordConfig> {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void onConfigReset() {
+		synchronized(lock) {
+			recordConfigs = new HashMap<String, T>();
+		}
 	}
 }
 
