@@ -87,6 +87,10 @@ public class JSONParserManager {
 		return result;
 	}
 	
+	public JSONRecord parseImpl(HttpRequest httpRequest, String configName) {
+		return parseImpl(httpRequest, configName, null);
+	}
+	
 	public JSONRecord parseImpl(HttpRequest httpRequest, String configName, StatementLogger stmtLogger) {
 		JSONRecord result = null;
 		int stmtLogIndex = start(stmtLogger, httpRequest.getUrl());	
@@ -102,6 +106,10 @@ public class JSONParserManager {
 			logger.error("JSONParserManager.parseImpl exception", e);
 		}
 		return result;
+	}
+	
+	public JSONRecord parseImpl(File file, String configName) {
+		return parseImpl(file, configName, null);
 	}
 	
 	public JSONRecord parseImpl(File file, String configName, StatementLogger stmtLogger) {

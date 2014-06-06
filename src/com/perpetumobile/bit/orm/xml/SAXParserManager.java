@@ -88,6 +88,10 @@ public class SAXParserManager {
 		return result;
 	}
 	
+	public XMLRecord parseImpl(HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
+		return parseImpl(httpRequest, configNamePrefix, rootElementName, null);
+	}
+	
 	public XMLRecord parseImpl(HttpRequest httpRequest, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
 		XMLRecord result = null;  
 		int stmtLogIndex = start(stmtLogger, httpRequest.getUrl());	
@@ -105,6 +109,10 @@ public class SAXParserManager {
 			logger.error("SAXParserManager.parseImpl exception", e);
 		}
 		return result;
+	}
+	
+	public XMLRecord parseImpl(File file, String configNamePrefix, String rootElementName) {
+		return parseImpl(file, configNamePrefix, rootElementName, null);
 	}
 	
 	public XMLRecord parseImpl(File file, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
