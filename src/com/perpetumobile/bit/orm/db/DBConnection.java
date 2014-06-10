@@ -25,9 +25,13 @@ public class DBConnection extends RecordConnection<Connection> {
 	final static public String DB_URL_KEY = "Database.Url";
 	final static public String DB_DATABASE_KEY = "Database.Database";
 	
+	final static public String DB_SQL_LAST_INSERT_ID_KEY = "Database.SQL.LastInsertId";
+	
 	//default config values
 	final static public int DB_RETRIES_DEFAULT = 0;
 	final static public int DB_LOGIN_TIMEOUT_DEFAULT = 30;
+	
+	final static public String DB_SQL_LAST_INSERT_ID_DEFAULT = "SELECT LAST_INSERT_ID()";
 	
 	private String driver = null;
 	private int maxRetries = 0;
@@ -35,6 +39,8 @@ public class DBConnection extends RecordConnection<Connection> {
 	
 	protected String url = null;
 	protected String database = null;
+	
+	protected String lastInsertIdSQL = null;
 	
 	/**
 	 * Creates a new instance of BaseDBConnection
@@ -46,6 +52,7 @@ public class DBConnection extends RecordConnection<Connection> {
 		loginTimeout = Config.getInstance().getIntClassProperty( configName, DB_LOGIN_TIMEOUT_KEY, DB_LOGIN_TIMEOUT_DEFAULT);
 		url = Config.getInstance().getClassProperty(configName, DB_URL_KEY, "");
 		database = Config.getInstance().getClassProperty(configName, DB_DATABASE_KEY, "");
+		lastInsertIdSQL = Config.getInstance().getClassProperty(configName, DB_SQL_LAST_INSERT_ID_KEY, DB_SQL_LAST_INSERT_ID_DEFAULT);
 	}
 	
 	public void connect() {
@@ -123,5 +130,9 @@ public class DBConnection extends RecordConnection<Connection> {
 	
 	public String getDatabaseName(){
 		return database;
+	}
+	
+	public String getLastInsertIdSQL() {
+		return lastInsertIdSQL;
 	}
 }

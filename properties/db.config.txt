@@ -9,3 +9,4 @@ Database.QueryTimeout: 30
 Database.User: 	
 Database.Password:
 Database.Url: jdbc:mysql://127.0.0.1:3306/
+Database.SQL.LastInsertId: SELECT LAST_INSERT_ID()
