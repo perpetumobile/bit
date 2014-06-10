@@ -377,6 +377,6 @@ public class HttpManager extends HttpManagerAdapter {
 	
 	static public void main(String[] args) throws IOException {
 		HttpResponseDocument response = HttpManager.getInstance().get("http://www.google.com/");		
-		Util.saveToFile(new StringBuffer(response.getPageSource()), "http_manager.htm", false);
+		Util.saveToFile(new StringBuffer(response.getPageSource()), new File("http_manager.htm"), false);
 	}
 }

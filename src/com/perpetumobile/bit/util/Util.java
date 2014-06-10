@@ -10,8 +10,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
-
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -510,10 +512,10 @@ final public class Util {
 		return System.currentTimeMillis() * 1000;
 	}
 	
-	static public StringBuffer readFile(String fileName) 
+	static public StringBuffer readFile(File file) 
 	throws IOException {
 		StringBuffer result = new StringBuffer();
-		BufferedReader in = new BufferedReader(new FileReader(fileName));
+		BufferedReader in = new BufferedReader(new FileReader(file));
 		char[] buf = new char[1024];
 		int len = 0;
 		while ((len = in.read(buf)) != -1) {
@@ -527,23 +529,34 @@ final public class Util {
 	 * save to file
 	 *
 	 * @param buf content to be saved in file
-	 * @param fileName file path and name 
-	 * @param delete delete file if exists
+	 * @param file
 	 * @param append append bytes at the end else at the begining of file
 	 *
 	 * @throws IOException
 	 */    	
-	static public void saveToFile(StringBuffer buf, String fileName, boolean append)
-	throws IOException {				
-		File file = new File(fileName);
-		
+	static public void saveToFile(StringBuffer buf, File file, boolean append)
+			throws IOException {
+				saveToFile(buf.toString(), file, append); 
+			}
+			
+	/**
+	 * save to file
+	 *
+	 * @param content to be saved in file
+	 * @param file 
+	 * @param append append bytes at the end else at the begining of file
+	 *
+	 * @throws IOException
+	 */    	
+	static public void saveToFile(String content, File file, boolean append)
+	throws IOException {
 		if (!append && file.exists()) {
 			file.delete();
 		}
 		
 		OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(file, append), "UTF8");
 		
-		out.write(buf.toString());
+		out.write(content);
 		out.flush();
 		out.close(); 
 	}
@@ -562,14 +575,14 @@ final public class Util {
 		return dir.delete();
 	}
 
-	static public void fixEndOfLine(String fileName, boolean isUnix)
+	static public void fixEndOfLine(File file, boolean isUnix)
 	throws IOException {
-		StringBuffer buf = readFile(fileName);
+		StringBuffer buf = readFile(file);
 		buf = replaceAll(buf, "\r\n", "\n");
 		if(!isUnix) {
 			buf = replaceAll(buf, "\n", "\r\n");
 		}
-		saveToFile(buf, fileName, false);
+		saveToFile(buf, file, false);
 	}
 	
 	static public String encodeHtml(String str) {
@@ -582,6 +595,32 @@ final public class Util {
 			return str;
 		}
 		return "";
+	}
+	
+	static public String decodeUrl(String url, String enc) {
+		String result = "";
+		if (url != null) {
+			try {
+				result = URLDecoder.decode(url, enc);
+			} catch (UnsupportedEncodingException e) {
+				logger.error("UnsupportedEncodingException at Util.decodeUrl", e);
+				result = url;
+			}
+		}
+		return result;
+	}
+	
+	static public String encodeUrl(String url, String enc) {
+		String result = "";
+		if (url != null) {
+			try {
+				result = URLEncoder.encode(url, enc);
+			} catch (UnsupportedEncodingException e) {
+				logger.error("UnsupportedEncodingException at Util.encodeUrl", e);
+				result = url;
+			}
+		}
+		return result;
 	}
 	
 	static public String getHttpQueryValue(String key, String query) {
@@ -819,9 +858,9 @@ final public class Util {
 			if(cmd.hasOption("nlf")) {
 				String fileName = cmd.getOptionValue("nlf");
 				if(cmd.hasOption("nlw")) {
-					fixEndOfLine(fileName, false);
+					fixEndOfLine(new File(fileName), false);
 				} else {
-					fixEndOfLine(fileName, true);
+					fixEndOfLine(new File(fileName), true);
 				}
 				System.exit(0);
 			} else {

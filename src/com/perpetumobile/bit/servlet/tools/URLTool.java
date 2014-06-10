@@ -1,18 +1,12 @@
 package com.perpetumobile.bit.servlet.tools;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-
-import com.perpetumobile.bit.util.Logger;
-
+import com.perpetumobile.bit.util.Util;
 
 /**
  *
  * @author  Zoran Dukic
  */
 public class URLTool extends BaseTool {
-	static private Logger logger = new Logger(URLTool.class);
 	
 	public URLTool() {
 	}
@@ -26,28 +20,10 @@ public class URLTool extends BaseTool {
 	}
 	
 	static public String decode(String url, String enc) {
-		String result = "";
-		if (url != null) {
-			try {
-				result = URLDecoder.decode(url, enc);
-			} catch (UnsupportedEncodingException e) {
-				logger.error("UnsupportedEncodingException at URLTool.decode", e);
-				result = url;
-			}
-		}
-		return result;
+		return Util.decodeUrl(url, enc);
 	}
 	
 	static public String encode(String url, String enc) {
-		String result = "";
-		if (url != null) {
-			try {
-				result = URLEncoder.encode(url, enc);
-			} catch (UnsupportedEncodingException e) {
-				logger.error("UnsupportedEncodingException at URLTool.encode", e);
-				result = url;
-			}
-		}
-		return result;
+		return Util.encodeUrl(url, enc);
 	}
 }
