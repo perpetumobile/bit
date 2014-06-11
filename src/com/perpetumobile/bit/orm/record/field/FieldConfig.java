@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import com.perpetumobile.bit.config.Config;
 import com.perpetumobile.bit.util.Util;
 
-
 /**
  * 
  * @author Zoran Dukic
@@ -18,22 +17,8 @@ public class FieldConfig {
 	public static final String FIELD_NAME_CONFIG_KEY = ".Record.Field.Name";
 	public static final String FIELD_TYPE_CONFIG_KEY = ".Record.Field.Type";
 	
-	public static final int FIELD_TYPE_OTHER = 0;
-	public static final int FIELD_TYPE_INT = 1;
-	public static final int FIELD_TYPE_LONG = 2;
-	public static final int FIELD_TYPE_FLOAT = 3;
-	public static final int FIELD_TYPE_DOUBLE = 4;
-	public static final int FIELD_TYPE_CHAR = 5;
-	public static final int FIELD_TYPE_VARCHAR = 6;
-	public static final int FIELD_TYPE_TIME = 7;
-	public static final int FIELD_TYPE_TIMESTAMP = 8;
-	public static final int FIELD_TYPE_MD5 = 9;
-	public static final int FIELD_TYPE_AUTO_INCREMENT = 10;
-	public static final int FIELD_TYPE_BYTEBUFFER = 11;
-	public static final int FIELD_TYPE_UNIXTIMESTAMP = 12;
-	
 	private String fieldName = null;
-	private int fieldType = FIELD_TYPE_OTHER;
+	private FieldType fieldType = null;
 	private int length = -1;
 	private boolean valid = false;
 	
@@ -59,17 +44,10 @@ public class FieldConfig {
 	protected void init(String strFieldType) {
 		if(!Util.nullOrEmptyString(fieldName)) {
 			strFieldType = strFieldType.toLowerCase();
-			//TODO use enum
-			if(strFieldType.equals("int") || strFieldType.equals("integer")) {
-				fieldType = FIELD_TYPE_INT;
-			} else if(strFieldType.equals("long")) {
-				fieldType = FIELD_TYPE_LONG; 	
-			} else if(strFieldType.equals("float")) {
-				fieldType = FIELD_TYPE_FLOAT;
-			} else if(strFieldType.equals("double")) {
-				fieldType = FIELD_TYPE_DOUBLE;
-			} else if(strFieldType.startsWith("char") || strFieldType.startsWith("varchar")) {
-				fieldType = FIELD_TYPE_VARCHAR;
+			
+			// special case to support limiting string length
+			if(strFieldType.startsWith("char") || strFieldType.startsWith("varchar")) {
+				fieldType = FieldType.STRING;
 				int index1 = strFieldType.indexOf('(');
 				if(index1 > 0) {
 					int index2 = strFieldType.indexOf(')');
@@ -77,23 +55,13 @@ public class FieldConfig {
 						length = Util.toInt(strFieldType.substring(index1+1, index2), -1);
 					}
 				}
-			} else if(strFieldType.equals("text")) {
-				fieldType = FIELD_TYPE_VARCHAR;
-			} else if(strFieldType.equals("datetime")) {
-				fieldType = FIELD_TYPE_TIME;
-			} else if(strFieldType.equals("sqltimestamp")) {
-				fieldType = FIELD_TYPE_TIMESTAMP;
-			} else if(strFieldType.equals("unixtimestamp")) {
-				fieldType = FIELD_TYPE_UNIXTIMESTAMP;
-			} else if(strFieldType.equals("md5")) {
-				fieldType = FIELD_TYPE_MD5;
-			} else if(strFieldType.equals("auto")) {
-				fieldType = FIELD_TYPE_AUTO_INCREMENT;
-			} else if(strFieldType.equals("bytebuffer")) {
-				fieldType = FIELD_TYPE_BYTEBUFFER;	
 			} else {
-				fieldType = FIELD_TYPE_OTHER;
-			}	
+				fieldType = FieldType.get(strFieldType);
+				if(fieldType == null) {
+					fieldType = FieldType.STRING;
+				}
+			}
+	
 			valid = true;
 		}
 	}
@@ -103,41 +71,40 @@ public class FieldConfig {
 		Field result = null;
 		
 		switch(fieldType) {
-		case FIELD_TYPE_INT:
+		case BOOL:
+			result = new BooleanField(fieldName);
+			break;
+		case INT:
 			result = new IntField(fieldName);
 			break;
-		case FIELD_TYPE_LONG:
+		case AUTO_INCREMENT:	
+			result = new IntField(fieldName, true);
+			break;
+		case LONG:
 			result = new LongField(fieldName);
 			break;	
-		case FIELD_TYPE_FLOAT:
+		case FLOAT:
 			result = new FloatField(fieldName);
 			break;
-		case FIELD_TYPE_DOUBLE:
+		case DOUBLE:
 			result = new DoubleField(fieldName);
 			break;
-		case FIELD_TYPE_CHAR:
-		case FIELD_TYPE_VARCHAR:
+		case STRING:
 			result = new StringField(fieldName);
 			((StringField)result).setLength(length);
 			break;
-		case FIELD_TYPE_TIME:
-		case FIELD_TYPE_TIMESTAMP:	
+		case DATETIME:
+		case TIMESTAMP:	
 			result = new SQLTimestampField(fieldName);
 			break;
-		case FIELD_TYPE_UNIXTIMESTAMP:
+		case UNIXTIMESTAMP:
 			result = new UnixSQLTimestampField(fieldName);
 			break;	
-		case FIELD_TYPE_MD5:	
+		case MD5:	
 			result = new MD5Field(fieldName);
 			break;
-		case FIELD_TYPE_AUTO_INCREMENT:	
-			result = new IntField(fieldName, true);
-			break;
-		case FIELD_TYPE_BYTEBUFFER:
+		case BYTEBUFFER:
 			result = new ByteBufferField(fieldName);
-			break;	
-		default:
-			result = new StringField(fieldName);
 			break;
 		}
 		
@@ -152,7 +119,7 @@ public class FieldConfig {
 		return Util.toByteBuffer(fieldName, CHARSET_NAME);
 	}
 	
-	public int getFieldType() {		
+	public FieldType getFieldType() {		
 		return fieldType;
 	}
 	

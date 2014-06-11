@@ -145,6 +145,19 @@ abstract public class Field {
 		}
 	}
 	
+	// BooleanField interface
+	public boolean getBooleanFieldValue() {
+		throw new FieldUnsupportedOperationException("Field Name: " + getFieldName());
+	}
+	protected void setBooleanFieldValueImpl(boolean fieldValue) {
+		throw new FieldUnsupportedOperationException("Field Name: " + getFieldName());
+	}
+	public void setBooleanFieldValue(boolean fieldValue) {
+		setBooleanFieldValueImpl(fieldValue);
+		isSet = true;
+		timestamp = Util.currentTimeMicros();
+	}
+	
 	// IntField interface
 	public int getIntFieldValue() {
 		throw new FieldUnsupportedOperationException("Field Name: " + getFieldName());
