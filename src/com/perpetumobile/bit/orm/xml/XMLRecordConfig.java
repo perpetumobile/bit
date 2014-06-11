@@ -67,8 +67,4 @@ public class XMLRecordConfig extends RecordConfig {
 		
 		return result.toString();
 	}
-	
-	public XMLRecordHandler getXMLHandler(String localName, XMLRecordHandler parent) {
-		return new XMLRecordHandler(localName, parent);
-	}
 }

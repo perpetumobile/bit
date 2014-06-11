@@ -56,8 +56,4 @@ public class JSONRecordConfig extends RecordConfig {
 		
 		return result.toString();
 	}
-	
-	public JSONRecordHandler getXMLHandler(String localName, JSONRecordHandler parent) {
-		return new JSONRecordHandler(localName, parent);
-	}
 }
