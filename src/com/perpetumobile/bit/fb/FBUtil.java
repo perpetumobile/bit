@@ -212,8 +212,8 @@ public class FBUtil {
 		return buf.toString();
 	}
 
-	static public ArrayList<XMLRecord> getFQL(String tableName, String query, String accessToken) {
-		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>();
+	static public ArrayList<? extends XMLRecord> getFQL(String tableName, String query, String accessToken) {
+		ArrayList<? extends XMLRecord> result = new ArrayList<XMLRecord>();
 		String url = getFQLUrl(query, accessToken);
 		if(!Util.nullOrEmptyString(url)) {
 			try {

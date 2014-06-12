@@ -47,6 +47,10 @@ public class RelationshipConfig {
 		return relationshipType;
 	}
 	
+	public void setRelationshipType(RelationshipType relationshipType) {
+		this.relationshipType = relationshipType;
+	}
+	
 	public ArrayList<ForeignKeyConfig> getForeignKeyConfigs() {
 		return foreignKeyConfigs;
 	}

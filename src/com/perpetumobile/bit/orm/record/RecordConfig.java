@@ -179,10 +179,12 @@ abstract public class RecordConfig {
 	}
 	
 	public RelationshipConfig getRelationshipConfig(String configName) {
-	  RelationshipConfig rc =  relationshipMap.get(configName);
-	  if(rc == null)
-	    rc = new RelationshipConfig(getRecordConfig(configName, null), "list", null);
-	  return rc;
+		RelationshipConfig rc = relationshipMap.get(configName);
+		if(rc == null) {
+			rc = new RelationshipConfig(getRecordConfig(configName, null), "list", null);
+			relationshipMap.put(configName, rc);
+		}
+		return rc;
 	}
 	
 	public ArrayList<Field> createRecordFields() {

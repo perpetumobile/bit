@@ -1,6 +1,8 @@
 package com.perpetumobile.bit.orm.xml;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.xml.sax.Attributes;
 
@@ -84,7 +86,27 @@ public class XMLRecord extends Record {
 		}
 	}
 	
-	public ArrayList<XMLRecord> getXMLRecords(String... configNameArray) {
+	/**
+	 * Get first level aggregated XMLRecords.
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<? extends XMLRecord> getXMLRecords() {
+		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>();
+			
+		// add records from listRelationshipMap
+		Set<Entry<String, ArrayList<? extends Record>>> listSet = listRelationshipMap.entrySet();
+		for(Entry<String, ArrayList<? extends Record>> e : listSet) {
+			ArrayList<XMLRecord> list = (ArrayList<XMLRecord>)e.getValue();
+			result.addAll(list);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get deep level aggregated XMLRecords by walking down the relationship maps.
+	 */
+	public ArrayList<? extends XMLRecord> getXMLRecords(String... configNameArray) {
 		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>(); 
 		
 		StringBuilder buf = new StringBuilder();

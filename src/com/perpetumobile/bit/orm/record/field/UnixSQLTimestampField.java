@@ -3,6 +3,8 @@ package com.perpetumobile.bit.orm.record.field;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 
+import com.perpetumobile.bit.util.Util;
+
 /**
  * @author Zoran Dukic
  *
@@ -39,9 +41,12 @@ public class UnixSQLTimestampField extends LongField {
 	}
 	
 	protected void setFieldValueImpl(String fieldValue) {
-		Timestamp t = Timestamp.valueOf(fieldValue);
-		if(t != null) {
-			value = t.getTime() / 1000;
+		value = Util.toLong(fieldValue, -1);
+		if(value < 0) {
+			Timestamp t = Timestamp.valueOf(fieldValue);
+			if(t != null) {
+				value = t.getTime() / 1000;
+			}
 		}
 	}
 	

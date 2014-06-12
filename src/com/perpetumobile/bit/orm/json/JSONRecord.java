@@ -1,10 +1,14 @@
 package com.perpetumobile.bit.orm.json;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import com.perpetumobile.bit.orm.record.Record;
 import com.perpetumobile.bit.orm.record.RecordConnection;
 import com.perpetumobile.bit.orm.record.RecordConnectionManager;
+import com.perpetumobile.bit.orm.record.RelationshipConfig;
+import com.perpetumobile.bit.orm.record.RelationshipConfig.RelationshipType;
 import com.perpetumobile.bit.orm.record.StatementLogger;
 import com.perpetumobile.bit.orm.record.field.Field;
 import com.perpetumobile.bit.orm.record.field.FieldConfig;
@@ -59,7 +63,9 @@ public class JSONRecord extends Record {
 	@SuppressWarnings("unchecked")
 	public void aggregate(JSONRecord rec, boolean isList) {
 		String key = rec.getConfigName();
+		RelationshipConfig rc = config.getRelationshipConfig(key);
 		if(isList) {
+			rc.setRelationshipType(RelationshipType.List);
 			ArrayList<JSONRecord> list = (ArrayList<JSONRecord>)listRelationshipMap.get(key);
 			if(list == null) {
 				list = new ArrayList<JSONRecord>();
@@ -67,11 +73,41 @@ public class JSONRecord extends Record {
 			}
 			list.add(rec);
 		} else {
+			rc.setRelationshipType(RelationshipType.Record);
 			recordRelationshipMap.put(key, rec);
 		}
 	}
 	
-	public ArrayList<JSONRecord> getJSONRecords(String... configNameArray) {
+	/**
+	 * Get first level aggregated JSONRecords.
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<? extends JSONRecord> getJSONRecords() {
+		ArrayList<JSONRecord> result = new ArrayList<JSONRecord>();
+		
+		// add records from recordRelationshipMap
+		Set<Entry<String, Record>> recordSet = recordRelationshipMap.entrySet();
+		for(Entry<String, Record> e : recordSet) {
+			Record rec = e.getValue();
+			if(rec != null && rec instanceof JSONRecord) {
+				result.add((JSONRecord)rec);
+			}
+		}
+		
+		// add records from listRelationshipMap
+		Set<Entry<String, ArrayList<? extends Record>>> listSet = listRelationshipMap.entrySet();
+		for(Entry<String, ArrayList<? extends Record>> e : listSet) {
+			ArrayList<JSONRecord> list = (ArrayList<JSONRecord>)e.getValue();
+			result.addAll(list);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get deep level aggregated JSONRecords by walking down the relationship maps.
+	 */
+	public ArrayList<? extends JSONRecord> getJSONRecords(String... configNameArray) {
 		ArrayList<JSONRecord> result = new ArrayList<JSONRecord>();
 		
 		StringBuilder buf = new StringBuilder();

@@ -120,7 +120,7 @@ public class FBTool extends BaseTool {
 		return FBUtil.getFQLUrl(query, getAccessToken());
 	}
 	
-	public ArrayList<XMLRecord> getFQL(String tableName, String query) {
+	public ArrayList<? extends XMLRecord> getFQL(String tableName, String query) {
 		return FBUtil.getFQL(tableName, query, getAccessToken());
 	}
 }
