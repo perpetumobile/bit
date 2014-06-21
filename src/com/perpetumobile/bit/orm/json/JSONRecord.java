@@ -79,10 +79,11 @@ public class JSONRecord extends Record {
 	}
 	
 	/**
-	 * Get first level aggregated JSONRecords.
+	 * Get all first level aggregated JSONRecords. 
+	 * Includes all JSON objects and JSON objects in arrays. 
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<? extends JSONRecord> getJSONRecords() {
+	public ArrayList<? extends JSONRecord> getFirstLevelJSONRecords() {
 		ArrayList<JSONRecord> result = new ArrayList<JSONRecord>();
 		
 		// add records from recordRelationshipMap
@@ -102,6 +103,21 @@ public class JSONRecord extends Record {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Get first level aggregated JSONRecord for a given key.  
+	 */
+	public JSONRecord getFirstLevelJSONRecord(String key) {
+		return (JSONRecord)getRelationshipRecord(getRelationshipConfigName(key));
+	}
+		
+	/**
+	 * Get first level aggregated JSONRecord array for a given key.  
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<? extends JSONRecord> getFirstLevelJSONRecords(String key) {
+		return (ArrayList<JSONRecord>)getRelationshipRecordList(getRelationshipConfigName(key));
 	}
 	
 	/**

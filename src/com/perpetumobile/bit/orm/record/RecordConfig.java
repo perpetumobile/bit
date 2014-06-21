@@ -18,6 +18,7 @@ import com.perpetumobile.bit.util.Util;
  */
 abstract public class RecordConfig {
 	
+	// config name delimiter is used for data representations where relationship is implicit (e.g. json, xml)
 	public static final String CONFIG_NAME_DELIMITER_CONFIG_KEY = "Record.ConfigNameDelimiter";
 	public static final String CONFIG_NAME_DELIMITER_DEFAULT = "|";
 	
@@ -150,8 +151,48 @@ abstract public class RecordConfig {
 		return configName;
 	}
 	
+	/**
+	 * Returns config name delimiter.
+	 * 
+	 * Config name delimiter is used for data representations where relationship is implicit (e.g. json, xml).
+	 * In that case, there is no need to specify relationship in config but it is auto-detected and relationship record
+	 * config name is automatically generated using the delimiter.
+	 *
+	 * Does not apply to SQL since relationship is not implicit and needs to be specified in config.
+	 */
 	public String getConfigNameDelimiter() {
 		return configNameDelimiter;
+	}
+	
+	/**
+	 * Returns config name as an array of config keys.
+	 * Config name delimiter is used to split configName into array of config keys.
+	 * 
+	 * @see #getConfigNameDelimiter()
+	 */
+	public String[] getConfigNameArray() {
+		return (configName != null ? configName.split(configNameDelimiter) : null);
+	}
+	
+	/**
+	 * Returns relationship config name for a given key.
+	 * 
+	 * @see #getConfigNameDelimiter()
+	 */
+	public String getRelationshipConfigName(String key) {
+		StringBuilder buf = new StringBuilder(configName);
+		buf.append(configNameDelimiter);
+		buf.append(key);
+		return buf.toString();
+	}
+	
+	/**
+	 * Returns relationship config name as an array of config keys for a given key.
+	 * 
+	 * @see #getConfigNameDelimiter()
+	 */
+	public String[] getRelationshipConfigNameArray(String key) {
+		return getRelationshipConfigName(key).split(configNameDelimiter);
 	}
 	
 	public String getConnectionConfigName() {

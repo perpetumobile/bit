@@ -90,7 +90,7 @@ public class XMLRecord extends Record {
 	 * Get first level aggregated XMLRecords.
 	 */
 	@SuppressWarnings("unchecked")
-	public ArrayList<? extends XMLRecord> getXMLRecords() {
+	public ArrayList<? extends XMLRecord> getFirstLevelXMLRecords() {
 		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>();
 			
 		// add records from listRelationshipMap
@@ -104,7 +104,27 @@ public class XMLRecord extends Record {
 	}
 	
 	/**
-	 * Get deep level aggregated XMLRecords by walking down the relationship maps.
+	 * Get first level aggregated XMLRecord for a given local name.
+	 */
+	public XMLRecord getFirstLevelXMLRecord(String localName) {
+		ArrayList<? extends XMLRecord> list = getFirstLevelXMLRecords(localName);
+		if(!Util.nullOrEmptyList(list)) {
+			return list.get(0);
+		}
+		return null;
+	}
+		
+	/**
+	 * Get first level aggregated XMLRecord array for a given local name.
+	 */
+	@SuppressWarnings("unchecked")
+	public ArrayList<? extends XMLRecord> getFirstLevelXMLRecords(String localName) {
+		return (ArrayList<XMLRecord>)getRelationshipRecordList(getRelationshipConfigName(localName));
+	}
+	
+	/**
+	 * Get deep level aggregated XMLRecords by walking down the 
+	 * relationship maps.
 	 */
 	public ArrayList<? extends XMLRecord> getXMLRecords(String... configNameArray) {
 		ArrayList<XMLRecord> result = new ArrayList<XMLRecord>(); 

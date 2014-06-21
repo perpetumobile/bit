@@ -51,8 +51,32 @@ abstract public class Record implements Option {
 		return (config != null ? config.getConfigName() : null);
 	}
 	
+	/**
+	 * @see RecordConfig#getConfigNameDelimiter()
+	 */
 	public String getConfigNameDelimiter() {
 		return (config != null ? config.getConfigNameDelimiter() : RecordConfig.CONFIG_NAME_DELIMITER_DEFAULT);
+	}
+	
+	/**
+	 * @see RecordConfig#getConfigNameArray()
+	 */
+	public String[] getConfigNameArray() {
+		return (config != null ? config.getConfigNameArray() : null);
+	}
+	
+	/**
+	 * @see RecordConfig#getRelationshipConfigName(String)
+	 */
+	public String getRelationshipConfigName(String key) {
+		return (config != null ? config.getRelationshipConfigName(key) : null);
+	}
+	
+	/**
+	 * @see RecordConfig#getRelationshipConfigNameArray(String)
+	 */
+	public String[] getRelationshipConfigNameArray(String key) {
+		return (config != null ? config.getRelationshipConfigNameArray(key) : null);
 	}
 	
 	public String getConnectionConfigName() {
