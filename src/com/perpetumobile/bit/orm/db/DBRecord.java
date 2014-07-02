@@ -20,6 +20,8 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class DBRecord extends Record {
+	private static final long serialVersionUID = 1L;
+	
 	public DBRecord() {
 	}
 	

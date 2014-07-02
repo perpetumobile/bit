@@ -25,6 +25,7 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class CassandraRecord extends Record {
+	private static final long serialVersionUID = 1L;
 	
 	protected CassandraKey key = null;
 	protected CassandraKey superColumn = null;

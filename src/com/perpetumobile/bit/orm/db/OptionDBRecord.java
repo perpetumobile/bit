@@ -8,6 +8,7 @@ import com.perpetumobile.bit.util.OptionImpl;
  *
  */
 public class OptionDBRecord extends DBRecord {
+	private static final long serialVersionUID = 1L;
 
 	protected OptionImpl option = null;
 	

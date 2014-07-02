@@ -1,5 +1,6 @@
 package com.perpetumobile.bit.orm.record.field;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,7 +18,9 @@ import com.perpetumobile.bit.util.Util;
  * 
  *  @author Zoran Dukic
  */
-abstract public class Field {
+abstract public class Field implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	public static final String NAME_SPACE_DELIMITER = ".";
 	
 	protected String fieldName = null;

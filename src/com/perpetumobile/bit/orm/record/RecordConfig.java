@@ -1,7 +1,6 @@
 package com.perpetumobile.bit.orm.record;
 
-
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,7 +15,8 @@ import com.perpetumobile.bit.util.Util;
  * 
  * @author Zoran Dukic
  */
-abstract public class RecordConfig {
+abstract public class RecordConfig implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	// config name delimiter is used for data representations where relationship is implicit (e.g. json, xml)
 	public static final String CONFIG_NAME_DELIMITER_CONFIG_KEY = "Record.ConfigNameDelimiter";

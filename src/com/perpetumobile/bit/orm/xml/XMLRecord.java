@@ -20,6 +20,7 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class XMLRecord extends Record {
+	private static final long serialVersionUID = 1L;
 	
 	public XMLRecord() {
 	}

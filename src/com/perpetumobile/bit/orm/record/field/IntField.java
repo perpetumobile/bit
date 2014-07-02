@@ -15,6 +15,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class IntField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private int value = 0;
 	private boolean autoIncrement = false;
 	

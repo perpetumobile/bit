@@ -14,6 +14,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class LongField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	protected long value = 0;
 	
 	public LongField(String fieldName) {

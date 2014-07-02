@@ -15,6 +15,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class BooleanField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private boolean value = false;
 	
 	public BooleanField(String fieldName) {

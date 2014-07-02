@@ -1,5 +1,6 @@
 package com.perpetumobile.bit.orm.record;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -11,8 +12,9 @@ import com.perpetumobile.bit.util.Util;
  * 
  * @author Zoran Dukic
  */
-public class RelationshipConfig {
-		
+public class RelationshipConfig implements Serializable {
+	private static final long serialVersionUID = 1L;	
+	
 	protected RecordConfig recordConfig = null;
 	protected RelationshipType relationshipType = null;
 	protected ArrayList<ForeignKeyConfig> foreignKeyConfigs = new ArrayList<ForeignKeyConfig>();

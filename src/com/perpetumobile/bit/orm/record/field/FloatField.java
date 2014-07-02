@@ -14,6 +14,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class FloatField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private float value = 0;
 	
 	public FloatField(String fieldName) {

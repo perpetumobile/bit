@@ -20,7 +20,8 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class JSONRecord extends Record {
-
+	private static final long serialVersionUID = 1L;
+	
 	protected boolean isPrimitive = false;
 	
 	public JSONRecord() {

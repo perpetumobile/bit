@@ -1,5 +1,6 @@
 package com.perpetumobile.bit.orm.record.field;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 
 import com.perpetumobile.bit.config.Config;
@@ -9,7 +10,8 @@ import com.perpetumobile.bit.util.Util;
  * 
  * @author Zoran Dukic
  */
-public class FieldConfig {
+public class FieldConfig implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	public static final String CHARSET_NAME = "UTF8";
 	

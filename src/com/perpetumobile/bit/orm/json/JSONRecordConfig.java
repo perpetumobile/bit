@@ -12,6 +12,7 @@ import com.perpetumobile.bit.orm.record.field.FieldConfig;
  * @author Zoran Dukic
  */
 public class JSONRecordConfig extends RecordConfig {
+	private static final long serialVersionUID = 1L;
 	
 	public static final String PARSE_ALL_ENABLE_CONFIG_KEY = "JSONRecord.ParseAll.Enable";
 	

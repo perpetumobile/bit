@@ -13,6 +13,7 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class DBRecordConfig extends RecordConfig {
+	private static final long serialVersionUID = 1L;
 	
 	public static final String TABLE_NAME_CONFIG_KEY = ".DBRecord.Table.Name";
 	public static final String SELECT_CLAUSE_CONFIG_KEY = ".DBRecord.SelectClause";

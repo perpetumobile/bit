@@ -10,6 +10,7 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class UnixSQLTimestampField extends LongField {
+	private static final long serialVersionUID = 1L;
 	
 	public UnixSQLTimestampField(String fieldName) {
 		super(fieldName);

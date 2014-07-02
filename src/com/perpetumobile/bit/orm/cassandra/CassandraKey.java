@@ -6,6 +6,8 @@ import com.perpetumobile.bit.orm.record.field.ByteBufferField;
 
 
 public class CassandraKey extends ByteBufferField {
+	private static final long serialVersionUID = 1L;
+	
 	static public final String FIELD_NAME = "CassandraKey";
 	
 	private CassandraKey() {

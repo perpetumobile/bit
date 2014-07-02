@@ -18,6 +18,7 @@ import com.perpetumobile.bit.util.Util;
  * @author Zoran Dukic
  */
 public class CassandraRecordConfig extends RecordConfig {
+	private static final long serialVersionUID = 1L;
 	
 	public static final String READ_ALL_ENABLE_CONFIG_KEY = "CassandraRecord.ReadAll.Enable";
 	public static final String READ_ALL_COUNT_MAX_CONFIG_KEY = "CassandraRecord.ReadAll.Count.Max";

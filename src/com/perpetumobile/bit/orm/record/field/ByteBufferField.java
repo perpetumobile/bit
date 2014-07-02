@@ -15,6 +15,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class ByteBufferField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private ByteBuffer value = null;
 	
 	public ByteBufferField(String fieldName) {

@@ -13,6 +13,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class StringField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private String value = null;
 	private int length = -1;
 	

@@ -1,5 +1,6 @@
 package com.perpetumobile.bit.orm.record;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ import com.perpetumobile.bit.util.Util;
  * 
  * @author Zoran Dukic
  */
-abstract public class Record implements Option {
+abstract public class Record implements Option, Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	static private Logger logger = new Logger(Record.class);
 
 	protected RecordConfig config = null;
@@ -727,6 +730,8 @@ abstract public class Record implements Option {
 }
 
 class NullRecord extends Record {
+	private static final long serialVersionUID = 1L;
+	
 	public void init(String configName) {
 	}
 

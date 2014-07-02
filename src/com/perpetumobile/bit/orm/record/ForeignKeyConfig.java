@@ -1,11 +1,14 @@
 package com.perpetumobile.bit.orm.record;
 
+import java.io.Serializable;
+
 /**
  * 
  * @author Zoran Dukic
  */
 
-public class ForeignKeyConfig {
+public class ForeignKeyConfig implements Serializable {
+	private static final long serialVersionUID = 1L;
 	
 	protected String fieldName = null;
 	protected String foreignFieldName = null;

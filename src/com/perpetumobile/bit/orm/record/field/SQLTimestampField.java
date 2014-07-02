@@ -15,6 +15,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class SQLTimestampField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	protected Timestamp value = null;
 	protected String sqlFieldValue = null;
 	

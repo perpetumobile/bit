@@ -10,6 +10,8 @@ import com.perpetumobile.bit.util.Util;
 
 
 public class MD5Field extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private String value = null;
 	private String md5Value = null;
 	

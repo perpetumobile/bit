@@ -14,6 +14,8 @@ import com.perpetumobile.bit.util.Util;
  *
  */
 public class DoubleField extends Field {
+	private static final long serialVersionUID = 1L;
+	
 	private double value = 0;
 	
 	public DoubleField(String fieldName) {
