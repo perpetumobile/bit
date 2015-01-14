@@ -10,6 +10,7 @@ import com.perpetumobile.bit.orm.record.Record;
 import com.perpetumobile.bit.orm.record.RecordConnection;
 import com.perpetumobile.bit.orm.record.RecordConnectionManager;
 import com.perpetumobile.bit.orm.record.StatementLogger;
+import com.perpetumobile.bit.orm.record.exception.RecordConfigMismatchException;
 import com.perpetumobile.bit.orm.record.field.Field;
 import com.perpetumobile.bit.orm.record.field.FieldConfig;
 import com.perpetumobile.bit.util.Util;
@@ -85,6 +86,20 @@ public class XMLRecord extends Record {
 			}
 			list.add(rec);
 		}
+	}
+	
+	/**
+	 * Set first level XMLRecord for a given key.  
+	 */
+	public void setFirstLevelXMLRecord(String localName, XMLRecord rec) {
+		String relationshipConfigName = getRelationshipConfigName(localName);
+		if(!relationshipConfigName.equals(rec.getConfigName())) {
+			StringBuilder msg = new StringBuilder(rec.getConfigName());
+			msg.append(" != ");
+			msg.append(relationshipConfigName);
+			throw new RecordConfigMismatchException(msg.toString());
+		}
+		aggregate(rec);
 	}
 	
 	/**
