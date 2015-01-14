@@ -27,12 +27,12 @@ public class DBScriptRunner extends VelocityScript {
 	}
 
 	private boolean doExecute(DBConnection dbConnection, String script) 
-	throws IOException {
+	throws IOException, SQLException {
 		boolean result = false;
 		System.out.println("");
 		System.out.println("About to execute script: " + script);
 		System.out.println("Config: " + dbConnection.getConfigName());
-		System.out.println("Database: " + dbConnection.getUrl() + dbConnection.getDatabaseName());
+		System.out.println("Database: " + dbConnection.getUrl() + dbConnection.getSchema());
 		System.out.print("Continue (A/Y/N) ");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		String answer = reader.readLine();

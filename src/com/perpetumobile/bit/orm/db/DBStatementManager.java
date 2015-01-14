@@ -134,6 +134,29 @@ public class DBStatementManager {
 		return result;
 	}
 	
+	public void executeImpl(String dbConfigName, ArrayList<DBStatementTask> taskList)
+	throws Exception {
+		DBConnection dbConnection = null;
+		try {
+			dbConnection = DBConnectionManager.getInstance().getConnection(dbConfigName);
+			dbConnection.startTransaction();
+			for(DBStatementTask task : taskList) {
+				task.executeImpl(dbConnection);
+			}
+			dbConnection.commit();
+		} catch (Exception e) {
+			logger.error("DBStatementManager.execute exception", e);
+			if(dbConnection != null) {
+				dbConnection.rollback();
+				DBConnectionManager.getInstance().invalidateConnection(dbConnection);
+				dbConnection = null;
+			}
+			throw e;
+		} finally {
+			DBConnectionManager.getInstance().returnConnection(dbConnection);
+		}
+	}
+	
 	protected DBStatementTask createDBStatementTask(String dbConfigName, DBStatementMethod method, DBStatement<? extends DBRecord> stmt) {
 		DBStatementTask task = new DBStatementTask();
 		task.setDBConfigName(dbConfigName);
@@ -359,5 +382,40 @@ public class DBStatementManager {
 		DBStatementTask task = createDBStatementTask(dbConfigName, DBStatementMethod.DELETE, stmt);
 		task.setCallback(callback);
 		runTask(task, threadPoolManagerConfigName, false);
-	}	
+	}
+	
+	/**
+	 * Execute is executed in a Bit Service Thread.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public void executeSync(String dbConfigName, ArrayList<DBStatementTask> taskList) {
+		executeSync(dbConfigName, taskList, null);
+	}
+	
+	/**
+	 * Execute is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Blocking mode: Current thread is waiting for operation to complete and return result.
+	 */
+	public void executeSync(String dbConfigName, ArrayList<DBStatementTask> taskList, String threadPoolManagerConfigName) {
+		MultiDBStatementTask task = new MultiDBStatementTask(dbConfigName, taskList);
+		runTask(task, threadPoolManagerConfigName, true);
+	}
+	
+	/**
+	 * Execute is executed in a Bit Service Thread.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void execute(TaskCallback<MultiDBStatementTask> callback, String dbConfigName, ArrayList<DBStatementTask> taskList) {
+		execute(callback, dbConfigName, taskList, null);
+	}
+	
+	/**
+	 * Execute is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
+	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
+	 */
+	public void execute(TaskCallback<MultiDBStatementTask> callback, String dbConfigName, ArrayList<DBStatementTask> taskList, String threadPoolManagerConfigName) {
+		MultiDBStatementTask task = new MultiDBStatementTask(dbConfigName, taskList);
+		task.setCallback(callback);
+		runTask(task, threadPoolManagerConfigName, false);
+	}
 }

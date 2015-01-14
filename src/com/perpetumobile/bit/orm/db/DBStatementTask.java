@@ -22,22 +22,69 @@ public class DBStatementTask extends Task {
 
 	@Override
 	public void runImpl() throws Exception {
-		if(method == DBStatementMethod.SELECT) {
+		switch(method) {
+		case SELECT:
 			if(Util.nullOrEmptyString(strSQL)) {
 				resultList = DBStatementManager.getInstance().selectImpl(dbConfigName, stmt);
 			} else {
 				resultList = DBStatementManager.getInstance().selectImpl(dbConfigName, stmt, strSQL);
 			}
-		} else if(method == DBStatementMethod.INSERT || method == DBStatementMethod.INSERT_IGNORE || method == DBStatementMethod.REPLACE) {
+			break;
+		case INSERT:
+		case INSERT_IGNORE:
+		case REPLACE:
 			if(record != null) {
 				result = DBStatementManager.getInstance().insertImpl(dbConfigName, method, stmt, record);
 			} else if(!Util.nullOrEmptyList(recordList)) {
 				DBStatementManager.getInstance().insertImpl(dbConfigName, method, stmt, recordList);
 			}
-		} else if(method == DBStatementMethod.UPDATE) {
+			break;
+		case UPDATE:
 			result = DBStatementManager.getInstance().updateImpl(dbConfigName, stmt, record);
-		} else if(method == DBStatementMethod.DELETE) {
+			break;
+		case DELETE:
 			result = DBStatementManager.getInstance().deleteImpl(dbConfigName, stmt);
+			break;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void executeImpl(DBConnection dbConnection) throws Exception {
+		switch(method) {
+		case SELECT:
+			if(Util.nullOrEmptyString(strSQL)) {
+				resultList = stmt.readDBRecords(dbConnection);;
+			} else {
+				resultList = stmt.readDBRecords(dbConnection, strSQL);
+			}
+			break;
+		case INSERT:
+			if(record != null) {
+				result = ((DBStatement<DBRecord>)stmt).insertDBRecord(dbConnection, record);
+			} else if(!Util.nullOrEmptyList(recordList)) {
+				((DBStatement<DBRecord>)stmt).insertDBRecords(dbConnection, recordList);
+			}
+			break;
+		case INSERT_IGNORE:
+			if(record != null) {
+				result = ((DBStatement<DBRecord>)stmt).insertIgnoreDBRecord(dbConnection, record);
+			} else if(!Util.nullOrEmptyList(recordList)) {
+				((DBStatement<DBRecord>)stmt).insertIgnoreDBRecords(dbConnection, recordList);
+			}
+			break;
+		case REPLACE:
+			if(record != null) {
+				result = ((DBStatement<DBRecord>)stmt).replaceDBRecord(dbConnection, record);
+			} else if(!Util.nullOrEmptyList(recordList)) {
+				((DBStatement<DBRecord>)stmt).replaceDBRecords(dbConnection, recordList);
+			}
+			break;
+		case UPDATE:
+			result = ((DBStatement<DBRecord>)stmt).updateDBRecords(dbConnection, record);
+			break;
+		case DELETE:
+			result = stmt.deleteDBRecords(dbConnection);;
+			break;
 		}
 	}
 

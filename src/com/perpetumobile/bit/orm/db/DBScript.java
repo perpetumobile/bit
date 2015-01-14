@@ -169,12 +169,12 @@ public class DBScript extends RecordScript {
 			}
 						
 			dbConnection = DBConnectionManager.getInstance().getConnection(configName);
-			dbName = dbConnection.getDatabaseName();
+			dbName = dbConnection.getSchema();
 
 			if(!cmd.hasOption("a")) {
 				System.out.println("About to execute script: " + script);
 				System.out.println("Config: " + dbConnection.getConfigName());
-				System.out.println("Database: " + dbConnection.getUrl() + dbConnection.getDatabaseName());
+				System.out.println("Database: " + dbConnection.getUrl() + dbConnection.getSchema());
 				System.out.print("Continue (Y/N) ");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 				String answer = reader.readLine();
