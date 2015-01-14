@@ -10,6 +10,7 @@ import com.perpetumobile.bit.orm.record.RecordConnectionManager;
 import com.perpetumobile.bit.orm.record.RelationshipConfig;
 import com.perpetumobile.bit.orm.record.RelationshipConfig.RelationshipType;
 import com.perpetumobile.bit.orm.record.StatementLogger;
+import com.perpetumobile.bit.orm.record.exception.RecordConfigMismatchException;
 import com.perpetumobile.bit.orm.record.field.Field;
 import com.perpetumobile.bit.orm.record.field.FieldConfig;
 import com.perpetumobile.bit.util.Util;
@@ -77,6 +78,20 @@ public class JSONRecord extends Record {
 			rc.setRelationshipType(RelationshipType.Record);
 			recordRelationshipMap.put(key, rec);
 		}
+	}
+	
+	/**
+	 * Set first level JSONRecord for a given key.  
+	 */
+	public void setFirstLevelJSONRecord(String key, JSONRecord rec, boolean isList) {
+		String relationshipConfigName = getRelationshipConfigName(key);
+		if(!relationshipConfigName.equals(rec.getConfigName())) {
+			StringBuilder msg = new StringBuilder(rec.getConfigName());
+			msg.append(" != ");
+			msg.append(relationshipConfigName);
+			throw new RecordConfigMismatchException(msg.toString());
+		}
+		aggregate(rec, isList);
 	}
 	
 	/**
