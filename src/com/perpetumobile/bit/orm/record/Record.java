@@ -352,6 +352,17 @@ abstract public class Record implements Option, Serializable {
 		return getRelationshipRecord(configName, keyField, null, null);
 	}
 	
+	public boolean isFieldSet(String fieldName) {
+		Field field = getField(fieldName);
+		if(field != null) {
+			return field.isSet();
+		}
+		if(doThrowFieldNotConfiguredException()) {
+			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
+		}
+		return false;
+	}
+	
 	public String getSQLFieldValue(String fieldName) {
 		Field field = getField(fieldName);
 		if(field != null) {
@@ -627,17 +638,19 @@ abstract public class Record implements Option, Serializable {
 		
 		boolean isFirst = true;
 		for(Field f : getFields()) {
-			if(!isFirst) {
-				result.append(",");
+			if(f.isSet()) {
+				if(!isFirst) {
+					result.append(",");
+				}
+				result.append(NL);
+				
+				result.append(indent2);
+				result.append("\"");
+				result.append(f.getFieldName());
+				result.append("\":");
+				result.append(f.getJSONFieldValue());
+				isFirst = false;
 			}
-			result.append(NL);
-			
-			result.append(indent2);
-			result.append("\"");
-			result.append(f.getFieldName());
-			result.append("\": ");
-			result.append(f.getJSONFieldValue());
-			isFirst = false;
 		}
 		
 		// append records from recordRelationshipMap
