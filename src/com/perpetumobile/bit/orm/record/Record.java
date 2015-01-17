@@ -352,10 +352,30 @@ abstract public class Record implements Option, Serializable {
 		return getRelationshipRecord(configName, keyField, null, null);
 	}
 	
+	public void unSetField(String fieldName) {
+		Field field = getField(fieldName);
+		if(field != null) {
+			field.unSet();
+		} else if(doThrowFieldNotConfiguredException()) {
+			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
+		}
+	}
+	
 	public boolean isFieldSet(String fieldName) {
 		Field field = getField(fieldName);
 		if(field != null) {
 			return field.isSet();
+		}
+		if(doThrowFieldNotConfiguredException()) {
+			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
+		}
+		return false;
+	}
+	
+	public boolean isFieldSet(String fieldName, String nameSpace) {
+		Field field = getField(fieldName);
+		if(field != null) {
+			return field.isSet(nameSpace);
 		}
 		if(doThrowFieldNotConfiguredException()) {
 			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
