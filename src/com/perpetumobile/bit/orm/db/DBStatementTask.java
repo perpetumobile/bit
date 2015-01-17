@@ -40,10 +40,18 @@ public class DBStatementTask extends Task {
 			}
 			break;
 		case UPDATE:
-			result = DBStatementManager.getInstance().updateImpl(dbConfigName, stmt, record);
+			if(Util.nullOrEmptyString(strSQL)) {
+				result = DBStatementManager.getInstance().updateImpl(dbConfigName, stmt, record);
+			} else {
+				result = DBStatementManager.getInstance().executeImpl(dbConfigName, stmt, strSQL);
+			}
 			break;
 		case DELETE:
-			result = DBStatementManager.getInstance().deleteImpl(dbConfigName, stmt);
+			if(Util.nullOrEmptyString(strSQL)) {
+				result = DBStatementManager.getInstance().deleteImpl(dbConfigName, stmt);
+			} else {
+				result = DBStatementManager.getInstance().executeImpl(dbConfigName, stmt, strSQL);
+			}
 			break;
 		}
 	}
@@ -80,10 +88,18 @@ public class DBStatementTask extends Task {
 			}
 			break;
 		case UPDATE:
-			result = ((DBStatement<DBRecord>)stmt).updateDBRecords(dbConnection, record);
+			if(Util.nullOrEmptyString(strSQL)) {
+				result = ((DBStatement<DBRecord>)stmt).updateDBRecords(dbConnection, record);
+			} else {
+				result = ((DBStatement<DBRecord>)stmt).executeUpdate(dbConnection, strSQL);
+			}
 			break;
 		case DELETE:
-			result = stmt.deleteDBRecords(dbConnection);;
+			if(Util.nullOrEmptyString(strSQL)) {
+				result = stmt.deleteDBRecords(dbConnection);
+			} else {
+				result = ((DBStatement<DBRecord>)stmt).executeUpdate(dbConnection, strSQL);
+			}
 			break;
 		}
 	}

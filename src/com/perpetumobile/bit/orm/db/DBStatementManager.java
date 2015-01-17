@@ -134,6 +134,25 @@ public class DBStatementManager {
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public int executeImpl(String dbConfigName, DBStatement<? extends DBRecord> stmt, String strSQL)
+	throws Exception {
+		int result = 0; 
+		DBConnection dbConnection = null;
+		try {
+			dbConnection = DBConnectionManager.getInstance().getConnection(dbConfigName);
+			result = ((DBStatement<DBRecord>)stmt).executeUpdate(dbConnection, strSQL);
+		} catch (Exception e) {
+			logger.error("DBStatementManager.update exception", e);
+			DBConnectionManager.getInstance().invalidateConnection(dbConnection);
+			dbConnection = null;
+			throw e;
+		} finally {
+			DBConnectionManager.getInstance().returnConnection(dbConnection);
+		}
+		return result;
+	}
+	
 	public void executeImpl(String dbConfigName, ArrayList<DBStatementTask> taskList)
 	throws Exception {
 		DBConnection dbConnection = null;
