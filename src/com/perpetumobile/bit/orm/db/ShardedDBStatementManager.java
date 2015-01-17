@@ -58,6 +58,10 @@ public class ShardedDBStatementManager implements ConfigSubscriber {
 		return result;
 	}
 	
+	public boolean isSameShard(String schemaConfigName, String id1, String id2) {
+		return (getShard(schemaConfigName, id1) == getShard(schemaConfigName, id2));
+	}
+	
 	public ArrayList<DBInstance> getReadSQLInstances(String schemaConfigName, String id) {
 		ArrayList<DBInstance> result = null;
 		ShardedDBInstanceMap map = null;
