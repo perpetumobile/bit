@@ -1,6 +1,10 @@
 package com.perpetumobile.bit.http;
 
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.perpetumobile.bit.util.Util;
 
@@ -18,7 +22,9 @@ public class HttpRequest {
 	protected String content = null;
 	protected String mimeType = MIME_TYPE_DEFAULT;
 	protected String charset = CHARSET_DEFAULT;
-		
+
+	protected Map<String, List<String>> headerFields = null;
+	
 	public HttpRequest() {
 	}
 	
@@ -92,5 +98,46 @@ public class HttpRequest {
 			}
 		}
 		return result.toString();
+	}
+	
+	public Map<String, List<String>> getHeaderFields() {
+		return headerFields;
+	}
+	
+	public List<String> getHeaderValues(String name) {
+		return (headerFields != null ? headerFields.get(name) : null);
+	}
+	
+	public String getHeaderValue(String name) {
+		List<String> list = getHeaderValues(name);
+		if(!Util.nullOrEmptyList(list)) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	public void setHeaderFields(Map<String, List<String>> headerFields) {
+		this.headerFields = headerFields;
+	}
+	
+	public void setHeader(String name, String value) {
+		if(headerFields == null) {
+			headerFields = new HashMap<String, List<String>>();
+		}
+		List<String> list = new ArrayList<String>();
+		list.add(value);
+		headerFields.put(name, list);
+	}
+	
+	public void addHeader(String name, String value) {
+		if(headerFields == null) {
+			headerFields = new HashMap<String, List<String>>();
+		}
+		List<String> list = headerFields.get(name);
+		if(list == null) {
+			list = new ArrayList<String>();
+			headerFields.put(name, list);
+		}
+		list.add(value);
 	}
 }

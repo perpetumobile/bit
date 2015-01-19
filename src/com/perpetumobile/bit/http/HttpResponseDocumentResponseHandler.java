@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.Header;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
@@ -31,14 +32,14 @@ public class HttpResponseDocumentResponseHandler implements  ResponseHandler<Htt
 		}
 		HttpEntity entity = response.getEntity();
 		if(entity != null) {
-			if(result.getStatusCode() < 300) {
-				result.setPageSource(EntityUtils.toString(entity));
-				result.setContentLenght(entity.getContentLength());
-			} else {
-				// do we need to do something different here?
-				result.setPageSource(EntityUtils.toString(entity));
-				result.setContentLenght(entity.getContentLength());
+			// TODO: do we need to do anything different depending on response code
+			result.setPageSource(EntityUtils.toString(entity));
+			result.setContentLenght(entity.getContentLength());
+			Header ctHeader = entity.getContentType();
+			if(ctHeader != null) {
+				result.setContentType(ctHeader.getValue());
 			}
+			result.setHeaderFields(response.getAllHeaders());
 			EntityUtils.consume(entity);
 		}
 		return result;

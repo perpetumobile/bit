@@ -3,6 +3,10 @@ package com.perpetumobile.bit.http;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -12,7 +16,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpDelete;
@@ -20,7 +23,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.params.ClientPNames;
-
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -146,13 +148,24 @@ public class HttpManager extends HttpManagerAdapter {
 		}
 	}
 	
-	private void setRequestHeader(HttpRequest method) {
+	private void setRequestHeader(HttpRequest method, Map<String, List<String>> headerFields) {
 		// fake ie6.0
 		method.setHeader("accept", "image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*");
 		method.setHeader("-------", "----:-----------:----------------------------");
 		method.setHeader("accept-language", "en-us");
 		method.setHeader("---------------", "----- -------");
 		method.setHeader("user-agent", userAgent);
+		
+		if(headerFields != null) {
+			Set<Entry<String, List<String>>> set = headerFields.entrySet();
+			for(Entry<String, List<String>> e : set) {
+				String name = e.getKey();
+				List<String> values = e.getValue();
+				for(String v : values) {
+					method.addHeader(name, v);
+				}
+			}
+		}
 	}
 	
 	private void printDebugInfo(HttpRequest request, HttpResponse response) {
@@ -198,12 +211,16 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 	
 	public HttpResponseDocument get(String url) {
+		return get(url, null);
+	}
+	
+	public HttpResponseDocument get(String url, Map<String, List<String>> headerFields) {
 	  HttpResponseDocument result = new HttpResponseDocument(url);
 
 	  HttpClient client = getHttpClient(true);
 	  HttpGet httpGet = new HttpGet(fixUrl(url));
 	  HttpContext context = new BasicHttpContext(); 
-	  setRequestHeader(httpGet);
+	  setRequestHeader(httpGet, headerFields);
 
 	  try { 
 	    ResponseHandler<HttpResponseDocument> response = new HttpResponseDocumentResponseHandler(url, context);
@@ -218,12 +235,16 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 
 	public HttpResponseDocument post(String url) {
+		return post(url, null);
+	}
+	
+	public HttpResponseDocument post(String url, Map<String, List<String>> headerFields) {
 	  HttpResponseDocument result = new HttpResponseDocument(url);
 
 	  HttpClient client = getHttpClient(true);
 	  HttpPost httpPost = new HttpPost(fixUrl(url));
 	  HttpContext context = new BasicHttpContext();
-	  setRequestHeader(httpPost);
+	  setRequestHeader(httpPost, headerFields);
 
 	  try { 
 	    ResponseHandler<HttpResponseDocument> response = new HttpResponseDocumentResponseHandler(url, context);
@@ -238,12 +259,16 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 
 	public HttpResponseDocument post(String url, String content, ContentType contentType) {
+		return post(url, content, contentType, null);
+	}
+	
+	public HttpResponseDocument post(String url, String content, ContentType contentType, Map<String, List<String>> headerFields) {
 	  HttpResponseDocument result = new HttpResponseDocument(url);
 
 	  HttpClient client = getHttpClient(true);
 	  HttpPost httpPost = new HttpPost(fixUrl(url));
 	  HttpContext context = new BasicHttpContext();
-	  setRequestHeader(httpPost);
+	  setRequestHeader(httpPost, headerFields);
 	  httpPost.setEntity(new StringEntity(content, contentType));
 
 	  try { 
@@ -258,13 +283,13 @@ public class HttpManager extends HttpManagerAdapter {
 	  return result;
 	}
 	
-	public HttpResponseDocument post(String url, MultipartEntity entity) {
+	public HttpResponseDocument post(String url, MultipartEntity entity, Map<String, List<String>> headerFields) {
 	  HttpResponseDocument result = new HttpResponseDocument(url);
 
 	  HttpClient client = getHttpClient(true);
 	  HttpPost httpPost = new HttpPost(fixUrl(url));
 	  HttpContext context = new BasicHttpContext();
-	  setRequestHeader(httpPost);
+	  setRequestHeader(httpPost, headerFields);
 	  httpPost.setEntity(entity);
 
 	  try { 
@@ -280,6 +305,10 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 	
 	public HttpResponseDocument post(String url, String partName, File file, String mimeType) {
+		return post(url, partName, file, mimeType, null);
+	}
+	
+	public HttpResponseDocument post(String url, String partName, File file, String mimeType, Map<String, List<String>> headerFields) {
 		MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		FileBody body = null;
 		if(!Util.nullOrEmptyString(mimeType)) {
@@ -288,10 +317,14 @@ public class HttpManager extends HttpManagerAdapter {
 			body = new FileBody(file);
 		}
 		entity.addPart(partName, body);
-		return post(url, entity);
+		return post(url, entity, headerFields);
 	}
 	
 	public HttpResponseDocument post(String url, String partName, byte[] data, String fileName, String mimeType) {
+		return post(url, partName, data, fileName, mimeType, null);
+	}
+	
+	public HttpResponseDocument post(String url, String partName, byte[] data, String fileName, String mimeType, Map<String, List<String>> headerFields) {
 		MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 		ByteArrayBody body = null;
 		if(!Util.nullOrEmptyString(mimeType)) {
@@ -300,16 +333,20 @@ public class HttpManager extends HttpManagerAdapter {
 			body = new ByteArrayBody(data, fileName);
 		}
 		entity.addPart(partName, body);
-		return post(url, entity);
+		return post(url, entity, headerFields);
 	}
 	
 	public HttpResponseDocument delete(String url) {
+		return delete(url, null);
+	}
+	
+	public HttpResponseDocument delete(String url, Map<String, List<String>> headerFields) {
 	  HttpResponseDocument result = new HttpResponseDocument(url);
 
 	  HttpClient client = getHttpClient(true);
 	  HttpDelete httpDelete = new HttpDelete(fixUrl(url));
 	  HttpContext context = new BasicHttpContext();
-	  setRequestHeader(httpDelete);
+	  setRequestHeader(httpDelete, headerFields);
 
 	  try { 
 	    ResponseHandler<HttpResponseDocument> response = new HttpResponseDocumentResponseHandler(url, context);
@@ -324,15 +361,24 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 	
 	public Image getImage(String url) {
+		return getImage(url, null);
+	}
+	
+	public Image getImage(String url, Map<String, List<String>> headerFields) {
 		HttpImage httpImage = new HttpImage(fixUrl(url));
+		getImage(httpImage, headerFields);
 		return httpImage.getImage();
 	}
 	
 	public void getImage(HttpImage httpImage) {
+		getImage(httpImage, null);
+	}
+	
+	public void getImage(HttpImage httpImage, Map<String, List<String>> headerFields) {
 		String url = fixUrl(httpImage.getUrl());
 		HttpClient client = getHttpClient(true);
 		HttpGet httpGet = new HttpGet(url);
-		setRequestHeader(httpGet);
+		setRequestHeader(httpGet, headerFields);
 
 		try { 
 			HttpResponse response = client.execute(httpGet);
@@ -352,11 +398,15 @@ public class HttpManager extends HttpManagerAdapter {
 	}
 	
 	public long getContentLength(String url) {
+		return getContentLength(url, null);
+	}
+	
+	public long getContentLength(String url, Map<String, List<String>> headerFields) {
 		long result = 0;
 		
 		HttpClient client = getHttpClient(true);
 		HttpGet httpGet = new HttpGet(fixUrl(url));
-		setRequestHeader(httpGet);
+		setRequestHeader(httpGet, headerFields);
 
 		try { 
 			HttpResponse response = client.execute(httpGet);

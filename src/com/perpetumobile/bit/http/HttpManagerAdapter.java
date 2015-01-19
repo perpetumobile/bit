@@ -17,14 +17,14 @@ public class HttpManagerAdapter {
 		HttpResponseDocument result = null;
 		switch(httpRequest.method) {
 		case GET:
-			result = HttpManager.getInstance().get(httpRequest.getUrl());
+			result = HttpManager.getInstance().get(httpRequest.getUrl(), httpRequest.getHeaderFields());
 			break;
 		case POST:
 			String content = httpRequest.getContent();
 			if(!Util.nullOrEmptyString(content)) {
-				result = HttpManager.getInstance().post(httpRequest.getUrl(), content, ContentType.create(httpRequest.getMimeType(), httpRequest.getCharset()));
+				result = HttpManager.getInstance().post(httpRequest.getUrl(), content, ContentType.create(httpRequest.getMimeType(), httpRequest.getCharset()), httpRequest.getHeaderFields());
 			} else {
-				result = HttpManager.getInstance().post(httpRequest.getUrl());
+				result = HttpManager.getInstance().post(httpRequest.getUrl(), httpRequest.getHeaderFields());
 			}
 			break;
 		}

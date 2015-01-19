@@ -11,7 +11,6 @@ public class HttpImage {
 	protected int statusCode = -1;
 	protected BufferedImage image = null;
 	
-	protected boolean fetchFailed = false;
 	
 	public HttpImage() {	
 	}
@@ -94,12 +93,6 @@ public class HttpImage {
 	 * @return the image
 	 */
 	public BufferedImage getImage() {
-		if(image == null && !fetchFailed) {
-			HttpManager.getInstance().getImage(this);
-		}
-		if(image == null) {
-			fetchFailed = true;
-		}
 		return image;
 	}
 
