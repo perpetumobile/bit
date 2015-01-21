@@ -416,6 +416,17 @@ abstract public class Record implements Option, Serializable {
 		return null;
 	}
 	
+	public boolean getBooleanFieldValue(String fieldName) {
+		Field field = getField(fieldName);
+		if(field != null) {
+			return field.getBooleanFieldValue();
+		}
+		if(doThrowFieldNotConfiguredException()) {
+			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
+		}
+		return false;
+	}
+	
 	public int getIntFieldValue(String fieldName) {
 		Field field = getField(fieldName);
 		if(field != null) {
@@ -495,6 +506,15 @@ abstract public class Record implements Option, Serializable {
 		Field field = getField(fieldName);
 		if(field != null) {
 			field.setByteBufferFieldValue(fieldValue);
+		} else if(doThrowFieldNotConfiguredException()) {
+			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
+		}
+	}
+	
+	public void setBooleanFieldValue(String fieldName, boolean fieldValue) {
+		Field field = getField(fieldName);
+		if(field != null) {
+			field.setBooleanFieldValue(fieldValue);
 		} else if(doThrowFieldNotConfiguredException()) {
 			throw new FieldNotConfiguredException("Record Config Name: " + getConfigName() + "; Field Name: " + fieldName);
 		}
