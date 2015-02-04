@@ -9,6 +9,7 @@ public class JSONParserTask extends Task {
 
 	protected HttpRequest httpRequest = null;
 	protected File file = null;
+	protected boolean isHeaderConfigName = false;
 	protected String configName = null;
 	protected StatementLogger stmtLogger = null;
 	
@@ -20,7 +21,7 @@ public class JSONParserTask extends Task {
 	@Override
 	public void runImpl() {	
 		if(httpRequest != null) {
-			result = JSONParserManager.getInstance().parseImpl(httpRequest, configName, stmtLogger);
+			result = JSONParserManager.getInstance().parseImpl(httpRequest, isHeaderConfigName, configName, stmtLogger);
 		} else if (file != null) {
 			result = JSONParserManager.getInstance().parseImpl(file, configName, stmtLogger);
 		}
@@ -38,6 +39,10 @@ public class JSONParserTask extends Task {
 		this.file = file;
 	}
 
+	public void setIsHeaderConfigName(boolean isHeaderConfigName) {
+		this.isHeaderConfigName = isHeaderConfigName;
+	}
+	
 	public void setConfigName(String configName) {
 		this.configName = configName;
 	}

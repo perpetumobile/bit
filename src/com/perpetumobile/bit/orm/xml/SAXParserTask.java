@@ -10,6 +10,7 @@ public class SAXParserTask extends Task {
 
 	protected HttpRequest httpRequest = null;
 	protected File file = null;
+	protected boolean isHeaderConfigName = false;
 	protected String configNamePrefix = null;
 	protected String rootElementName = null;
 	protected StatementLogger stmtLogger = null;
@@ -22,7 +23,7 @@ public class SAXParserTask extends Task {
 	@Override
 	public void runImpl() {
 		if(httpRequest != null) {
-			result = SAXParserManager.getInstance().parseImpl(httpRequest, configNamePrefix, rootElementName, stmtLogger);
+			result = SAXParserManager.getInstance().parseImpl(httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, stmtLogger);
 		} else if (file != null) {
 			result = SAXParserManager.getInstance().parseImpl(file, configNamePrefix, rootElementName, stmtLogger);
 		}
@@ -38,6 +39,10 @@ public class SAXParserTask extends Task {
 
 	public void setFile(File file) {
 		this.file = file;
+	}
+	
+	public void setIsHeaderConfigName(boolean isHeaderConfigName) {
+		this.isHeaderConfigName = isHeaderConfigName;
 	}
 	
 	public void setConfigNamePrefix(String configNamePrefix) {

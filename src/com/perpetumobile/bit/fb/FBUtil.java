@@ -217,7 +217,7 @@ public class FBUtil {
 		String url = getFQLUrl(query, accessToken);
 		if(!Util.nullOrEmptyString(url)) {
 			try {
-				XMLRecord root = SAXParserManager.getInstance().parseImpl(new HttpRequest(url), "FQL", "fql_query_response");
+				XMLRecord root = SAXParserManager.getInstance().parseImpl(new HttpRequest(url), false, "FQL", "fql_query_response");
 				if(root != null) {
 					result = root.getXMLRecords("FQL", "fql_query_response", tableName);
 				}

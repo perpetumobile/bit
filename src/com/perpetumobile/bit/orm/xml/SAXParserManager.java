@@ -12,6 +12,7 @@ import org.xml.sax.InputSource;
 
 import com.perpetumobile.bit.http.HttpManager;
 import com.perpetumobile.bit.http.HttpRequest;
+import com.perpetumobile.bit.http.HttpResponseDocument;
 import com.perpetumobile.bit.orm.record.StatementLog;
 import com.perpetumobile.bit.orm.record.StatementLogger;
 import com.perpetumobile.bit.util.Logger;
@@ -88,15 +89,20 @@ public class SAXParserManager {
 		return result;
 	}
 	
-	public XMLRecord parseImpl(HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
-		return parseImpl(httpRequest, configNamePrefix, rootElementName, null);
+	public XMLRecord parseImpl(HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName) {
+		return parseImpl(httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, null);
 	}
 	
-	public XMLRecord parseImpl(HttpRequest httpRequest, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
+	public XMLRecord parseImpl(HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName, StatementLogger stmtLogger) {
 		XMLRecord result = null;  
 		int stmtLogIndex = start(stmtLogger, httpRequest.getUrl());	
 		try {
-			String response = HttpManager.getInstance().executeImpl(httpRequest).getPageSource();
+			HttpResponseDocument doc = HttpManager.getInstance().executeImpl(httpRequest);
+			if(isHeaderConfigName) {
+				configNamePrefix = doc.getHeaderValue(configNamePrefix);
+				rootElementName = doc.getHeaderValue(rootElementName);
+			}
+			String response = doc.getPageSource();
 			if(!Util.nullOrEmptyString(response)) {
 				// TODO: There must be a faster way to fix & :-) 
 				response = Util.replaceAll(response, "&amp;", "&");
@@ -168,25 +174,26 @@ public class SAXParserManager {
 	 * Parse is executed in a Bit Service Thread.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
-		return parseSync(httpRequest, configNamePrefix, rootElementName, null, null);
+	public XMLRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName) {
+		return parseSync(httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, null, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
-		return parseSync(httpRequest, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	public XMLRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		return parseSync(httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public XMLRecord parseSync(HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+	public XMLRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
 		SAXParserTask task = new SAXParserTask();
 		task.setHttpRequest(httpRequest);
+		task.setIsHeaderConfigName(isHeaderConfigName);
 		task.setConfigNamePrefix(configNamePrefix);
 		task.setRootElementName(rootElementName);
 		task.setStmtLogger(stmtLogger);
@@ -228,25 +235,26 @@ public class SAXParserManager {
 	 * Parse is executed in a Bit Service Thread.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName) {
-		parse(callback, httpRequest, configNamePrefix, rootElementName, null, null);
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName) {
+		parse(callback, httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, null, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
-		parse(callback, httpRequest, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName) {
+		parse(callback, httpRequest, isHeaderConfigName, configNamePrefix, rootElementName, threadPoolManagerConfigName, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+	public void parse(TaskCallback<SAXParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configNamePrefix, String rootElementName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
 		SAXParserTask task = new SAXParserTask();
 		task.setHttpRequest(httpRequest);
+		task.setIsHeaderConfigName(isHeaderConfigName);
 		task.setConfigNamePrefix(configNamePrefix);
 		task.setRootElementName(rootElementName);
 		task.setStmtLogger(stmtLogger);

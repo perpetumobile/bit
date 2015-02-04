@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.perpetumobile.bit.http.HttpManager;
 import com.perpetumobile.bit.http.HttpRequest;
+import com.perpetumobile.bit.http.HttpResponseDocument;
 import com.perpetumobile.bit.orm.record.StatementLog;
 import com.perpetumobile.bit.orm.record.StatementLogger;
 import com.perpetumobile.bit.util.Logger;
@@ -87,15 +88,19 @@ public class JSONParserManager {
 		return result;
 	}
 	
-	public JSONRecord parseImpl(HttpRequest httpRequest, String configName) {
-		return parseImpl(httpRequest, configName, null);
+	public JSONRecord parseImpl(HttpRequest httpRequest, boolean isHeaderConfigName, String configName) {
+		return parseImpl(httpRequest, isHeaderConfigName, configName, null);
 	}
 	
-	public JSONRecord parseImpl(HttpRequest httpRequest, String configName, StatementLogger stmtLogger) {
+	public JSONRecord parseImpl(HttpRequest httpRequest, boolean isHeaderConfigName, String configName, StatementLogger stmtLogger) {
 		JSONRecord result = null;
 		int stmtLogIndex = start(stmtLogger, httpRequest.getUrl());	
 		try {
-			String response = HttpManager.getInstance().executeImpl(httpRequest).getPageSource();
+			HttpResponseDocument doc = HttpManager.getInstance().executeImpl(httpRequest);
+			if(isHeaderConfigName) {
+				configName = doc.getHeaderValue(configName);
+			}
+			String response = doc.getPageSource();
 			if(!Util.nullOrEmptyString(response)) {
 				StringReader in = new StringReader(response);
 				result = parseImpl(in, configName);
@@ -165,25 +170,26 @@ public class JSONParserManager {
 	 * Parse is executed in a Bit Service Thread.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public JSONRecord parseSync(HttpRequest httpRequest, String configName) {
-		return parseSync(httpRequest, configName, null, null);
+	public JSONRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configName) {
+		return parseSync(httpRequest, isHeaderConfigName, configName, null, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public JSONRecord parseSync(HttpRequest httpRequest, String configName, String threadPoolManagerConfigName) {
-		return parseSync(httpRequest, configName, threadPoolManagerConfigName, null);
+	public JSONRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configName, String threadPoolManagerConfigName) {
+		return parseSync(httpRequest, isHeaderConfigName, configName, threadPoolManagerConfigName, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Blocking mode: Current thread is waiting for operation to complete and return result.
 	 */
-	public JSONRecord parseSync(HttpRequest httpRequest, String configName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+	public JSONRecord parseSync(HttpRequest httpRequest, boolean isHeaderConfigName, String configName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
 		JSONParserTask task = new JSONParserTask();
 		task.setHttpRequest(httpRequest);
+		task.setIsHeaderConfigName(isHeaderConfigName);
 		task.setConfigName(configName);
 		task.setStmtLogger(stmtLogger);
 		runTask(task, threadPoolManagerConfigName, true);
@@ -223,25 +229,26 @@ public class JSONParserManager {
 	 * Parse is executed in a Bit Service Thread.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, String configName) {
-		parse(callback, httpRequest, configName, null, null);
+	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configName) {
+		parse(callback, httpRequest, isHeaderConfigName, configName, null, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, String configName, String threadPoolManagerConfigName) {
-		parse(callback, httpRequest, configName, threadPoolManagerConfigName, null);
+	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configName, String threadPoolManagerConfigName) {
+		parse(callback, httpRequest, isHeaderConfigName, configName, threadPoolManagerConfigName, null);
 	}
 	
 	/**
 	 * Parse is executed in a Bit Service Thread if threadPoolManagerConfigName is not provided.
 	 * Non-Blocking mode: Current thread is NOT waiting for operation to complete.
 	 */
-	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, String configName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
+	public void parse(TaskCallback<JSONParserTask> callback, HttpRequest httpRequest, boolean isHeaderConfigName, String configName, String threadPoolManagerConfigName, StatementLogger stmtLogger) {
 		JSONParserTask task = new JSONParserTask();
 		task.setHttpRequest(httpRequest);
+		task.setIsHeaderConfigName(isHeaderConfigName);
 		task.setConfigName(configName);
 		task.setStmtLogger(stmtLogger);
 		task.setCallback(callback);
