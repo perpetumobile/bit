@@ -200,8 +200,8 @@ abstract public class Record implements Option, Serializable {
 					getConnectionManager().invalidateConnectionImpl(c);
 				}
 			} finally {
-				if(connection == null) {
-					getConnectionManager().returnConnectionImpl(c);
+				if(connectionManager != null && connection == null) {
+					connectionManager.returnConnectionImpl(c);
 				}
 			}
 			if(result == null) {
@@ -257,8 +257,8 @@ abstract public class Record implements Option, Serializable {
 					getConnectionManager().invalidateConnectionImpl(c);
 				}
 			} finally {
-				if(connection == null) {
-					getConnectionManager().returnConnectionImpl(c);
+				if(connectionManager != null && connection == null) {
+					connectionManager.returnConnectionImpl(c);
 				}
 			}
 			if(result == null) {
@@ -310,8 +310,8 @@ abstract public class Record implements Option, Serializable {
 					getConnectionManager().invalidateConnectionImpl(c);
 				}
 			} finally {
-				if(connection == null) {
-					getConnectionManager().returnConnectionImpl(c);
+				if(connectionManager != null && connection == null) {
+					connectionManager.returnConnectionImpl(c);
 				}
 			}
 			if(result == null) {

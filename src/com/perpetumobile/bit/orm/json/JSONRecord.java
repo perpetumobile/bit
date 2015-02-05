@@ -1,6 +1,7 @@
 package com.perpetumobile.bit.orm.json;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -211,11 +212,13 @@ public class JSONRecord extends Record {
 		return super.generateJSON(indent, readable);
 	}
 	
+	@Override
 	protected RecordConnectionManager<? extends RecordConnection<?>> getConnectionManager() {
 		// lazy relationship loading not supported for JSONRecord
 		return null;
 	}
 
+	@Override
 	protected Record readRecordRelationship(String configName, RecordConnection<?> connection, StatementLogger stmtLogger)
 	throws Exception {
 		// lazy relationship loading not supported for JSONRecord
@@ -226,5 +229,23 @@ public class JSONRecord extends Record {
 	throws Exception {
 		// lazy relationship loading not supported for JSONRecord
 		return null;
+	}
+	
+	@Override
+	public Record getRelationshipRecord(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for JSONRecord
+		return recordRelationshipMap.get(configName);
+	}
+	
+	@Override
+	public ArrayList<? extends Record> getRelationshipRecordList(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for JSONRecord
+		return listRelationshipMap.get(configName);
+	}
+	
+	@Override
+	public HashMap<String, ? extends Record> getRelationshipRecordMap(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for JSONRecord
+		return mapRelationshipMap.get(configName);
 	}
 }

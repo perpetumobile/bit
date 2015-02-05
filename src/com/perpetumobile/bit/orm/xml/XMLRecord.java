@@ -1,6 +1,7 @@
 package com.perpetumobile.bit.orm.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -184,20 +185,41 @@ public class XMLRecord extends Record {
 		} 
 	}
 	
+	@Override
 	protected RecordConnectionManager<? extends RecordConnection<?>> getConnectionManager() {
 		// lazy relationship loading not supported for XMLRecord
 		return null;
 	}
 
+	@Override
 	protected Record readRecordRelationship(String configName, RecordConnection<?> connection, StatementLogger stmtLogger)
 	throws Exception {
 		// lazy relationship loading not supported for XMLRecord
 		return null;
 	}
 
+	@Override
 	protected ArrayList<? extends Record> readListRelationship(String configName, RecordConnection<?> connection, StatementLogger stmtLogger)
 	throws Exception {
 		// lazy relationship loading not supported for XMLRecord
 		return null;
+	}
+	
+	@Override
+	public Record getRelationshipRecord(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for XMLRecord
+		return recordRelationshipMap.get(configName);
+	}
+	
+	@Override
+	public ArrayList<? extends Record> getRelationshipRecordList(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for XMLRecord
+		return listRelationshipMap.get(configName);
+	}
+	
+	@Override
+	public HashMap<String, ? extends Record> getRelationshipRecordMap(String configName, RecordConnection<?> connection, StatementLogger stmtLogger) {
+		// lazy relationship loading not supported for XMLRecord
+		return mapRelationshipMap.get(configName);
 	}
 }
