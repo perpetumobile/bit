@@ -48,6 +48,13 @@ public class BooleanField extends Field {
 		return Boolean.toString(value);
 	}
 	
+	public String getSQLFieldValue() {
+		if(value) {
+			return "1";
+		}
+		return "0";
+	}
+	
 	public String getJSONFieldValue() {
 		return getFieldValue();
 	}
