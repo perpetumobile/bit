@@ -86,7 +86,7 @@ public class ParamTool extends ParameterTool {
 		params.put(key, newValues);
 	}
 	
-	private void addFileItem(String key, FileItem value) { 
+	protected void addFileItem(String key, FileItem value) { 
 		FileItem[] newValues = (FileItem[])Util.addToArray(getFileItems(key), value);
 		fileItems.put(key, newValues);	
 	}
@@ -135,8 +135,7 @@ public class ParamTool extends ParameterTool {
 		return ServletFileUpload.isMultipartContent(getHttpServletRequest());
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void parseMultipartRequest() throws Exception {
+	protected void parseMultipartRequest() throws Exception {
 		ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
 		List<FileItem> items = upload.parseRequest(getHttpServletRequest());
 		for(FileItem item : items) {
