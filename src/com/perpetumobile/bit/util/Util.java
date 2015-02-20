@@ -1,9 +1,11 @@
 package com.perpetumobile.bit.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.ObjectInputStream;
@@ -520,6 +522,20 @@ final public class Util {
 	
 	static public long currentTimeMicros() {
 		return System.currentTimeMillis() * 1000;
+	}
+	
+	static public ByteBuffer readBinaryFile(File file) 
+	throws IOException {
+		ByteBuffer result = ByteBuffer.allocate((int)file.length());
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+		byte[] buf = new byte[1024];
+		int len = 0;
+		while ((len = in.read(buf)) != -1) {
+			result.put(buf, 0, len);
+		}
+		in.close();
+		result.flip();
+		return result;
 	}
 	
 	static public StringBuffer readFile(File file) 
