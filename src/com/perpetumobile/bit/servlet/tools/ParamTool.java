@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.HashMap;
 
 /**
- * TODO make sure that ParameterParser calls getString and getStrings in all other get methods
+ * TODO make sure that ParameterTool calls getValue and getValues in all other get methods
  * @author Zoran Dukic
  */
 public class ParamTool extends ParameterTool {
@@ -91,20 +91,21 @@ public class ParamTool extends ParameterTool {
 		fileItems.put(key, newValues);	
 	}
 	
-	public String getString(String key) {
+	@Override
+	public Object getValue(String key) {
 		String[] values = params.get(key);
 		if (values != null) {
 			return values[0];
 		}
-		return super.getString(key);
+		return super.getValue(key);
 	}
 	
-	public String[] getStrings(String key) {
+	public Object[] getValues(String key) {
 		String[] values = params.get(key);
 		if (values != null) {
 			return values;
 		}
-		return super.getStrings(key);
+		return super.getValues(key);
 	}
 
 	public long getLong(String key, long alternate) {
@@ -142,7 +143,7 @@ public class ParamTool extends ParameterTool {
 			if (item.isFormField()) {
 				String name = item.getFieldName();
 				String value = item.getString();
-				addString(name, value);
+				setString(name, value);
 			} else {
 				String fileName = item.getName();
 				if(fileName != null && !fileName.equals("")) {
