@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.entity.mime.MultipartEntity;
+
 import com.perpetumobile.bit.util.Util;
 
 /**
@@ -22,6 +24,8 @@ public class HttpRequest {
 	protected String content = null;
 	protected String mimeType = MIME_TYPE_DEFAULT;
 	protected String charset = CHARSET_DEFAULT;
+
+	protected MultipartEntity multipartEntity = null;
 
 	protected Map<String, List<String>> headerFields = null;
 	
@@ -100,6 +104,14 @@ public class HttpRequest {
 		return result.toString();
 	}
 	
+	public MultipartEntity getMultipartEntity() {
+		return multipartEntity;
+	}
+
+	public void setMultipartEntity(MultipartEntity multipartEntity) {
+		this.multipartEntity = multipartEntity;
+	}
+
 	public Map<String, List<String>> getHeaderFields() {
 		return headerFields;
 	}

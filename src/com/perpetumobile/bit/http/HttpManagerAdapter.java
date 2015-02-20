@@ -27,6 +27,9 @@ public class HttpManagerAdapter {
 				result = HttpManager.getInstance().post(httpRequest.getUrl(), httpRequest.getHeaderFields());
 			}
 			break;
+		case MULTI_PART:
+			result = HttpManager.getInstance().post(httpRequest.getUrl(), httpRequest.getMultipartEntity(), httpRequest.getHeaderFields());
+			break;
 		}
 		return result;
 	}

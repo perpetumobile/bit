@@ -8,10 +8,14 @@ import java.util.HashMap;
  *
  */
 public enum HttpMethod {
+	// response is a text
 	GET("GET"),
 	POST("POST"),
+	MULTI_PART("MULTI_PART"),
+	// response is an image
 	GET_IMAGE("GET_IMAGE"),
-	POST_IMAGE("POST_IMAGE");
+	POST_IMAGE("POST_IMAGE"),
+	MULTI_PART_IMAGE("MULTI_PART_IMAGE");
 	
 	private static final HashMap<String,HttpMethod> map = new HashMap<String,HttpMethod>();
 	static {
