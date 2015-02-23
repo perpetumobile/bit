@@ -15,8 +15,13 @@ public class JSONRecordConfig extends RecordConfig {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String PARSE_ALL_ENABLE_CONFIG_KEY = "JSONRecord.ParseAll.Enable";
+	public static final boolean PARSE_ALL_ENABLE_DEFAULT = true;
 	
-	protected boolean parseAll = true;
+	public static final String AGGREGATE_STRICT_CONFIG_KEY = "JSONRecord.Aggregate.Strict";
+	public static final boolean AGGREGATE_STRICT_DEFAULT = false;
+	
+	protected boolean parseAll = PARSE_ALL_ENABLE_DEFAULT;
+	protected boolean aggregateStrict = AGGREGATE_STRICT_DEFAULT;
 	
 	public JSONRecordConfig(String configName)
 	throws ClassNotFoundException {
@@ -31,7 +36,8 @@ public class JSONRecordConfig extends RecordConfig {
 	protected void init(String configName, VelocityContext vc)
 	throws ClassNotFoundException {
 		super.init(configName, JSONRecord.class, vc);
-		parseAll = Config.getInstance().getBooleanClassProperty(configName, PARSE_ALL_ENABLE_CONFIG_KEY, true);
+		parseAll = Config.getInstance().getBooleanClassProperty(configName, PARSE_ALL_ENABLE_CONFIG_KEY, PARSE_ALL_ENABLE_DEFAULT);
+		aggregateStrict = Config.getInstance().getBooleanClassProperty(configName, AGGREGATE_STRICT_CONFIG_KEY, AGGREGATE_STRICT_DEFAULT);
 	}
 	
 	protected RecordConfig getRecordConfig(String configName, VelocityContext vc) {
@@ -40,6 +46,10 @@ public class JSONRecordConfig extends RecordConfig {
 	
 	public boolean isParseAll() {
 		return parseAll;
+	}
+	
+	public boolean isAggregateStrict() {
+		return aggregateStrict;
 	}
 	
 	public String getSelectList() {

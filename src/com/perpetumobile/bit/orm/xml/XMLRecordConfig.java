@@ -15,9 +15,15 @@ public class XMLRecordConfig extends RecordConfig {
 	private static final long serialVersionUID = 1L;
 	
 	public static final String PARSE_ALL_ENABLE_CONFIG_KEY = "XMLRecord.ParseAll.Enable";
+	public static final boolean PARSE_ALL_ENABLE_DEFAULT = true;
+	
+	public static final String AGGREGATE_STRICT_CONFIG_KEY = "XMLRecord.Aggregate.Strict";
+	public static final boolean AGGREGATE_STRICT_DEFAULT = false;
+	
+	protected boolean parseAll = PARSE_ALL_ENABLE_DEFAULT;
+	protected boolean aggregateStrict = AGGREGATE_STRICT_DEFAULT;
 	
 	protected String localName = null;
-	protected boolean parseAll = true;
 	
 	public XMLRecordConfig(String configName)
 	throws ClassNotFoundException {
@@ -38,7 +44,8 @@ public class XMLRecordConfig extends RecordConfig {
 		} else {
 			localName = configName;
 		}
-		parseAll = Config.getInstance().getBooleanClassProperty(configName, PARSE_ALL_ENABLE_CONFIG_KEY, true);
+		parseAll = Config.getInstance().getBooleanClassProperty(configName, PARSE_ALL_ENABLE_CONFIG_KEY, PARSE_ALL_ENABLE_DEFAULT);
+		aggregateStrict = Config.getInstance().getBooleanClassProperty(configName, AGGREGATE_STRICT_CONFIG_KEY, AGGREGATE_STRICT_DEFAULT);
 	}
 	
 	protected RecordConfig getRecordConfig(String configName, VelocityContext vc) {
@@ -51,6 +58,10 @@ public class XMLRecordConfig extends RecordConfig {
 	
 	public boolean isParseAll() {
 		return parseAll;
+	}
+	
+	public boolean isAggregateStrict() {
+		return aggregateStrict;
 	}
 	
 	public String getSelectList() {

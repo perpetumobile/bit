@@ -38,7 +38,11 @@ public class JSONRecord extends Record {
 	}
 	
 	public boolean isParseAll() {
-		return (config != null ? ((JSONRecordConfig)config).isParseAll() : true);
+		return (config != null ? ((JSONRecordConfig)config).isParseAll() : JSONRecordConfig.PARSE_ALL_ENABLE_DEFAULT);
+	}
+	
+	public boolean isAggregateStrict() {
+		return (config != null ? ((JSONRecordConfig)config).isAggregateStrict() : JSONRecordConfig.AGGREGATE_STRICT_DEFAULT);
 	}
 	
 	public boolean isPrimitive() {
@@ -63,9 +67,12 @@ public class JSONRecord extends Record {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void aggregate(JSONRecord rec, boolean isList) {
-		String key = rec.getConfigName();
+		aggregate(rec.getConfigName(), rec, isList);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void aggregate(String key, JSONRecord rec, boolean isList) {
 		RelationshipConfig rc = config.getRelationshipConfig(key);
 		if(isList) {
 			rc.setRelationshipType(RelationshipType.List);
@@ -86,13 +93,13 @@ public class JSONRecord extends Record {
 	 */
 	public void setFirstLevelJSONRecord(String key, JSONRecord rec, boolean isList) {
 		String relationshipConfigName = getRelationshipConfigName(key);
-		if(!relationshipConfigName.equals(rec.getConfigName())) {
+		if(isAggregateStrict() && !relationshipConfigName.equals(rec.getConfigName())) {
 			StringBuilder msg = new StringBuilder(rec.getConfigName());
 			msg.append(" != ");
 			msg.append(relationshipConfigName);
 			throw new RecordConfigMismatchException(msg.toString());
 		}
-		aggregate(rec, isList);
+		aggregate(relationshipConfigName, rec, isList);
 	}
 	
 	/**

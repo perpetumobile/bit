@@ -40,7 +40,11 @@ public class XMLRecord extends Record {
 	}
 	
 	public boolean isParseAll() {
-		return (config != null ? ((XMLRecordConfig)config).isParseAll() : true);
+		return (config != null ? ((XMLRecordConfig)config).isParseAll() : XMLRecordConfig.PARSE_ALL_ENABLE_DEFAULT);
+	}
+	
+	public boolean isAggregateStrict() {
+		return (config != null ? ((XMLRecordConfig)config).isAggregateStrict() : XMLRecordConfig.AGGREGATE_STRICT_DEFAULT);
 	}
 	
 	public void readRecord(Attributes attr) {
@@ -73,13 +77,16 @@ public class XMLRecord extends Record {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void aggregate(XMLRecord rec) {
+		aggregate(rec.getConfigName(), rec);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void aggregate(String key, XMLRecord rec) {
 		Field f = getField(rec.getLocalName());
 		if(f != null && !f.isSet()) {
 			f.setFieldValue(rec.getFieldValue(rec.getLocalName()));
 		} else {
-			String key = rec.getConfigName();
 			ArrayList<XMLRecord> list = (ArrayList<XMLRecord>)listRelationshipMap.get(key);
 			if(list == null) {
 				list = new ArrayList<XMLRecord>();
@@ -94,13 +101,13 @@ public class XMLRecord extends Record {
 	 */
 	public void setFirstLevelXMLRecord(String localName, XMLRecord rec) {
 		String relationshipConfigName = getRelationshipConfigName(localName);
-		if(!relationshipConfigName.equals(rec.getConfigName())) {
+		if(isAggregateStrict() && !relationshipConfigName.equals(rec.getConfigName())) {
 			StringBuilder msg = new StringBuilder(rec.getConfigName());
 			msg.append(" != ");
 			msg.append(relationshipConfigName);
 			throw new RecordConfigMismatchException(msg.toString());
 		}
-		aggregate(rec);
+		aggregate(relationshipConfigName, rec);
 	}
 	
 	/**
